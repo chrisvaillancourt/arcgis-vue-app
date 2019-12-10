@@ -50,7 +50,17 @@ export default {
       const homeButton = new Home({
         view,
       });
-      view.ui.add(homeButton, "top-left");
+      // use view.when to do functionality after view is loaded
+      view.when(
+        function() {
+          // All the resources in the MapView and the map have loaded. Now execute additional processes
+          view.ui.add(homeButton, "top-left");
+        },
+        function(error) {
+          // Use the errback function to handle when the view doesn't load properly
+          console.log("The view's resources failed to load: ", error);
+        }
+      );
     });
   },
   beforeDestroy() {
