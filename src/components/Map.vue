@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div id="map"></div>
 </template>
 
 <script>
@@ -9,20 +9,23 @@ export default {
   name: "web-map",
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
-    loadModules(["esri/Map", "esri/views/MapView"], { css: true }).then(
-      ([ArcGISMap, MapView]) => {
-        const map = new ArcGISMap({
-          basemap: "topo-vector",
-        });
-
-        this.view = new MapView({
-          container: this.$el,
-          map: map,
-          center: [-118, 34],
-          zoom: 8,
-        });
-      }
-    );
+    loadModules(["esri/Map", "esri/views/MapView", "esri/widgets/Home"], {
+      css: true,
+    }).then(([Map, MapView, Home]) => {
+      const map = new Map({
+        basemap: "streets",
+      });
+      const view = new MapView({
+        container: this.$el,
+        map,
+        zoom: 8,
+        center: [-118, 34],
+      });
+      const homeButton = new Home({
+        view,
+      });
+      view.ui.add(homeButton, "top-left");
+    });
   },
   beforeDestroy() {
     if (this.view) {
