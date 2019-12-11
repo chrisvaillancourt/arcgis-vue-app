@@ -106,10 +106,25 @@ export default {
       });
 
       // use view.when to do functionality after view is loaded
+
       view.when(
-        function() {
+        async function() {
           // All the resources in the MapView and the map have loaded. Now execute additional processes
           view.ui.add(homeButton, "top-left");
+
+          const layerView = await view.whenLayerView(countyLayer);
+
+          layerView.watch("updating", async function(value) {
+            if (!value) {
+              let results = await layerView.queryFeatures({
+                geometry: view.extent,
+                returnGeometry: false,
+              });
+              // results.features is the array of features
+              let chartData = results.features;
+              chartData.forEach(item => console.log(item.attributes));
+            }
+          });
         },
         function(error) {
           // Use the errback function to handle when the view doesn't load properly
