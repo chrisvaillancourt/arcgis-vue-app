@@ -16,11 +16,12 @@ export default {
         "esri/widgets/Home",
         "esri/layers/VectorTileLayer",
         "esri/Basemap",
+        "esri/layers/FeatureLayer",
       ],
       {
         css: true,
       }
-    ).then(([Map, MapView, Home, VectorTileLayer, Basemap]) => {
+    ).then(([Map, MapView, Home, VectorTileLayer, Basemap, FeatureLayer]) => {
       const vectorBaseLayer = new VectorTileLayer({
         // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
         url:
@@ -32,6 +33,58 @@ export default {
           "https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json",
       });
 
+      const colorRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-fill",
+          style: "none",
+          outline: { width: 1, color: [194, 194, 194, 0.15] },
+        },
+        visualVariables: [
+          {
+            type: "color",
+            field: "TOTPOP_CY",
+            normalizationField: "TOTPOP00",
+            legendOptions: {
+              title: "Ratio of 2019 Pop. to 2000 Pop.",
+            },
+            stops: [
+              {
+                value: 0.75,
+                color: [190, 48, 39, 255],
+                label: "< 0.75",
+              },
+              {
+                value: 0.875,
+                color: [213, 133, 127, 255],
+                label: null,
+              },
+              {
+                value: 1,
+                color: [235, 217, 216, 255],
+                label: "1",
+              },
+              {
+                value: 1.25,
+                color: [151, 162, 179, 255],
+                label: null,
+              },
+              {
+                value: 1.5,
+                color: [102, 113, 129, 255],
+                label: "> 1.5",
+              },
+            ],
+          },
+        ],
+      };
+
+      const countyLayer = new FeatureLayer({
+        url:
+          "https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Population_Households_Housing_Units_time_series_2019/FeatureServer/1",
+        renderer: colorRenderer,
+      });
+
       const basemap = new Basemap({
         baseLayers: [vectorBaseLayer],
         referenceLayers: [vectorBaseReference],
@@ -39,6 +92,7 @@ export default {
 
       const map = new Map({
         basemap,
+        layers: [countyLayer],
       });
       const view = new MapView({
         container: this.$el,
@@ -50,6 +104,7 @@ export default {
       const homeButton = new Home({
         view,
       });
+
       // use view.when to do functionality after view is loaded
       view.when(
         function() {
