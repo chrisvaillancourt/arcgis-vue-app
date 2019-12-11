@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <Map />
+    <Map id="map" />
+    <Chart id="chart" />
   </div>
 </template>
 
 <script>
 import Map from "./components/Map.vue";
+import Chart from "./components/Chart.vue";
 
 export default {
   name: "app",
   components: {
     Map,
+    Chart,
   },
 };
 </script>
@@ -25,8 +28,9 @@ body {
 }
 
 #app {
-  /* display: flex; */
-  /* flex-direction: column; */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "Map Chart";
   padding: 0;
   margin: 0;
   width: 100%;
@@ -34,5 +38,11 @@ body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+#map {
+  grid-area: Map;
+}
+#chart {
+  grid-area: Chart;
 }
 </style>
