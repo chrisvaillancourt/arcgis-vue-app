@@ -15,6 +15,7 @@ export default {
     Map,
     Chart,
   },
+  props: ["chartData"],
 };
 </script>
 

@@ -4,9 +4,12 @@
 
 <script>
 import { loadModules } from "esri-loader";
-
+import { mapMutations } from "vuex";
 export default {
   name: "web-map",
+  methods: {
+    ...mapMutations(["UPDATE_MAP_VIEW_DATA"]),
+  },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
     loadModules(
@@ -83,6 +86,21 @@ export default {
         url:
           "https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Population_Households_Housing_Units_time_series_2019/FeatureServer/1",
         renderer: colorRenderer,
+        outFields: [
+          "OBJECTID",
+          "TOTPOP00",
+          "TSPOP10_CY",
+          "TSPOP11_CY",
+          "TSPOP12_CY",
+          "TSPOP13_CY",
+          "TSPOP14_CY",
+          "TSPOP15_CY",
+          "TSPOP16_CY",
+          "TSPOP17_CY",
+          "TSPOP18_CY",
+          "TOTPOP_CY",
+          "AREA_GEO",
+        ], // we need to specify any additional fields
       });
 
       const basemap = new Basemap({
@@ -108,25 +126,35 @@ export default {
       // use view.when to do functionality after view is loaded
 
       view.when(
-        async function() {
+        async () => {
           // All the resources in the MapView and the map have loaded. Now execute additional processes
+          // TODO Refactor to make more sense
           view.ui.add(homeButton, "top-left");
 
           const layerView = await view.whenLayerView(countyLayer);
 
-          layerView.watch("updating", async function(value) {
+          layerView.watch("updating", async value => {
             if (!value) {
               let results = await layerView.queryFeatures({
                 geometry: view.extent,
                 returnGeometry: false,
               });
               // results.features is the array of features
-              let chartData = results.features;
-              chartData.forEach(item => console.log(item.attributes));
+              // results.features.attributes is the actual data
+              // the below is the same as:
+              /* 
+              let data = results.features.map(feature => feature.attributes);
+              this.UPDATE_MAP_VIEW_DATA(data)
+              
+              */
+              // this updates the data for the chart
+              this.UPDATE_MAP_VIEW_DATA(
+                results.features.map(feature => feature.attributes)
+              );
             }
           });
         },
-        function(error) {
+        error => {
           // Use the errback function to handle when the view doesn't load properly
           console.log("The view's resources failed to load: ", error);
         }
