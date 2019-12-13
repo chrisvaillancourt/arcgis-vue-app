@@ -4,21 +4,31 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    mapViewData: [],
-    arr: [1,2,3,4]
+    mapViewData: [{}],
+    
   },
   // getters are like computed properties for stores
   getters: {
-    calcTotPopCY: state => {
-      const popNums = state.mapViewData.map(data => data.TOTPOP_CY);
-      return popNums.reduce((accumulator, currentValue) => accumulator + currentValue ,0)
+    getSummaryStats: state => {
       
+      const summary = state.mapViewData.reduce((accumulator, currentObject) => {
+
+        for (let [key, value] of Object.entries(currentObject)) {
+          if (accumulator[key] == undefined) {
+            accumulator[key] = value;
+            } else {
+            accumulator[key] = accumulator[key] + value
+            }
+          }
+        return accumulator;
+        
+      },{})
+
+      return summary;
     }
   },
   mutations: {
-    ADD_ITEM: (state, payload) => {
-      state.arr = [...state.arr, payload.amount]
-    },
+    
     UPDATE_MAP_VIEW_DATA: (state, data) => state.mapViewData = [...data],
   }, 
   actions: {

@@ -2,15 +2,14 @@
   <div>
     <p>Chart!!</p>
 
-    <h2>Data:</h2>
-    <ul>
-      <li v-for="data in mapViewData" :key="data.OBJECTID">
-        {{ data }}
-      </li>
-    </ul>
-    <div>TOTPOP_CY: {{ calcTotPopCY }}</div>
-
-    <!-- <button @click="createMutant">Add Element</button> -->
+    <h2>Summary Stats</h2>
+    <div>
+      <ul>
+        <li v-for="(value, key, index) in getSummaryStats" :key="index">
+          {{ key }}: {{ value }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -22,11 +21,9 @@ export default {
   computed: {
     ...mapState(["mapViewData"]),
     // other computed properties
-    ...mapGetters(["calcTotPopCY"]),
+    ...mapGetters(["getSummaryStats"]),
   },
-  methods: {
-    // ...mapMutations(["ADD_ITEM"]),
-  },
+  methods: {},
 };
 </script>
 
