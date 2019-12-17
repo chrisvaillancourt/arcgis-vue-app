@@ -10,19 +10,21 @@ export default new Vuex.Store({
   // getters are like computed properties for stores
   getters: {
     getSummaryStats: state => {
-      
       const summary = state.mapViewData.reduce((accumulator, currentObject) => {
-
         for (let [key, value] of Object.entries(currentObject)) {
+          // Remove unnecessary field summary
+          if(key == "OBJECTID" || key == "AREA_GEO") {
+            continue;
+          }
           if (accumulator[key] == undefined) {
             accumulator[key] = value;
             } else {
-            accumulator[key] = accumulator[key] + value
+            accumulator[key] = accumulator[key] + value;
             }
           }
         return accumulator;
         
-      },{})
+      },{});
 
       return summary;
     }
@@ -33,5 +35,6 @@ export default new Vuex.Store({
   }, 
   actions: {
 
-  }
+  },
+  strict: process.env.NODE_ENV !== 'production'
 });

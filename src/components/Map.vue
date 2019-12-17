@@ -81,10 +81,11 @@ export default {
           },
         ],
       };
+      // TODO add zoom level dependency and generalized features
 
       const countyLayer = new FeatureLayer({
         url:
-          "https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Population_Households_Housing_Units_time_series_2019/FeatureServer/1",
+          "https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_time_series_2019_counties/FeatureServer/5",
         renderer: colorRenderer,
         outFields: [
           "OBJECTID",
