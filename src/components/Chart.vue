@@ -18,13 +18,14 @@
 import { mapState, mapGetters } from "vuex";
 import { select, selectAll } from "d3-selection";
 import { scaleBand, scaleLinear } from "d3-scale";
+import { axisLeft, axisBottom } from "d3-axis";
 
-const width = 300;
-const height = 300;
+const width = 600;
+const height = 600;
 
 export default {
-  name: "Chart",
-  props: [""],
+  name: `Chart`,
+  props: [``],
   data: function() {
     return {
       width,
@@ -32,9 +33,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(["mapViewData"]),
+    ...mapState([`mapViewData`]),
     // other computed properties
-    ...mapGetters(["getSummaryStats"]),
+    ...mapGetters([`getSummaryStats`]),
 
     // renderChart: function() {
     //   const chartData = this.getSummaryStats;
@@ -107,26 +108,53 @@ export default {
       */
       const xValue = d => d.value;
       const yValue = d => d.key;
+      const margin = {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 85,
+      };
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+
       const maxXValue = dataArray.map(xValue).reduce((a, b) => Math.max(a, b));
 
       const xScale = scaleLinear()
         .domain([0, maxXValue])
-        .range([0, width]);
+        .range([0, innerWidth]);
+
+      const xAxis = axisBottom(xScale);
 
       const yScale = scaleBand()
         .domain(dataArray.map(yValue))
-        .range([0, height]);
+        .range([0, innerHeight])
+        .padding(0.1);
 
-      const svg = select("#chartSVG");
+      const yAxis = axisLeft(yScale);
 
-      svg
-        .selectAll("rect")
+      const svg = select(`#chartSVG`);
+      const g = svg
+        .append(`g`)
+        .attr(`transform`, `translate(${margin.left}, ${margin.right})`);
+
+      // calling yAxis function and passing in a selection: yAxis(g.append(`g`));
+      // we can use call method to call a function on a selection instead
+
+      // add yAxis to chart
+      g.append(`g`).call(yAxis);
+
+      // add xAxis to chart
+      g.append(`g`)
+        .call(xAxis)
+        .attr(`transform`, `translate(0, ${innerHeight})`);
+
+      g.selectAll(`rect`)
         .data(dataArray)
         .enter()
-        .append("rect")
-        .attr("y", d => yScale(yValue(d)))
-        .attr("width", d => xScale(xValue(d)))
-        .attr("height", yScale.bandwidth());
+        .append(`rect`)
+        .attr(`y`, d => yScale(yValue(d)))
+        .attr(`width`, d => xScale(xValue(d)))
+        .attr(`height`, yScale.bandwidth());
     },
   },
   mounted() {},
@@ -134,6 +162,13 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+rect {
+  fill: steelblue;
+}
+text {
+  font-size: 1.5rem;
+}
+</style>
 
 // TODO flexible chart sizing
