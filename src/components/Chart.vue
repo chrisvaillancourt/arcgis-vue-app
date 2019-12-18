@@ -19,8 +19,9 @@ import { mapState, mapGetters } from "vuex";
 import { select, selectAll } from "d3-selection";
 import { scaleBand, scaleLinear } from "d3-scale";
 import { axisLeft, axisBottom } from "d3-axis";
+import { format } from "d3-format";
 
-const width = 600;
+const width = 800;
 const height = 600;
 
 export default {
@@ -122,8 +123,8 @@ export default {
       const xScale = scaleLinear()
         .domain([0, maxXValue])
         .range([0, innerWidth]);
-
-      const xAxis = axisBottom(xScale);
+      // TODO function to change format depending on max value
+      const xAxis = axisBottom(xScale).tickFormat(format(`,.0f`));
 
       const yScale = scaleBand()
         .domain(dataArray.map(yValue))
@@ -167,7 +168,7 @@ rect {
   fill: steelblue;
 }
 text {
-  font-size: 1.5rem;
+  font-size: 16px;
 }
 </style>
 
