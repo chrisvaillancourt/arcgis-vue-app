@@ -5,7 +5,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     mapViewData: [{}],
-    
+    featureLayerURL: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/1`,
+    mapDataAliases: [{}],
   },
   // getters are like computed properties for stores
   getters: {
@@ -13,7 +14,7 @@ export default new Vuex.Store({
       const summary = state.mapViewData.reduce((accumulator, currentObject) => {
         for (let [key, value] of Object.entries(currentObject)) {
           // Remove unnecessary field summary
-          if(key == "OBJECTID" || key == "AREA_GEO") {
+          if(key == `OBJECTID` || key == `AREA_GEO`) {
             continue;
           }
           if (accumulator[key] == undefined) {
@@ -27,14 +28,16 @@ export default new Vuex.Store({
       },{});
 
       return summary;
-    }
+    },
+    
   },
   mutations: {
     
     UPDATE_MAP_VIEW_DATA: (state, data) => state.mapViewData = [...data],
+    UPDATE_MAP_DATA_ALIASES: (state, data) => state.mapDataAliases = [...data]
   }, 
   actions: {
 
   },
-  strict: process.env.NODE_ENV !== 'production'
+  strict: process.env.NODE_ENV !== `production`
 });

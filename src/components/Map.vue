@@ -6,20 +6,21 @@
 import { loadModules } from "esri-loader";
 import { mapMutations } from "vuex";
 export default {
-  name: "web-map",
+  name: `web-map`,
+  props: [`featureLayerURL`],
   methods: {
-    ...mapMutations(["UPDATE_MAP_VIEW_DATA"]),
+    ...mapMutations([`UPDATE_MAP_VIEW_DATA`]),
   },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
     loadModules(
       [
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/widgets/Home",
-        "esri/layers/VectorTileLayer",
-        "esri/Basemap",
-        "esri/layers/FeatureLayer",
+        `esri/Map`,
+        `esri/views/MapView`,
+        `esri/widgets/Home`,
+        `esri/layers/VectorTileLayer`,
+        `esri/Basemap`,
+        `esri/layers/FeatureLayer`,
       ],
       {
         css: true,
@@ -27,35 +28,34 @@ export default {
     ).then(([Map, MapView, Home, VectorTileLayer, Basemap, FeatureLayer]) => {
       const vectorBaseLayer = new VectorTileLayer({
         // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
-        url:
-          "https://www.arcgis.com/sharing/rest/content/items/291da5eab3a0412593b66d384379f89f/resources/styles/root.json",
+        url: `https://www.arcgis.com/sharing/rest/content/items/291da5eab3a0412593b66d384379f89f/resources/styles/root.json`,
       });
+      // TODO add local vector style reference
       const vectorBaseReference = new VectorTileLayer({
         // item page: https://www.arcgis.com/home/item.html?id=1768e8369a214dfab4e2167d5c5f2454
-        url:
-          "https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json",
+        url: `https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json`,
       });
 
       const colorRenderer = {
-        type: "simple",
+        type: `simple`,
         symbol: {
-          type: "simple-fill",
-          style: "none",
+          type: `simple-fill`,
+          style: `none`,
           outline: { width: 1, color: [194, 194, 194, 0.15] },
         },
         visualVariables: [
           {
-            type: "color",
-            field: "TOTPOP_CY",
-            normalizationField: "TOTPOP00",
+            type: `color`,
+            field: `TOTPOP_CY`,
+            normalizationField: `TOTPOP00`,
             legendOptions: {
-              title: "Ratio of 2019 Pop. to 2000 Pop.",
+              title: `Ratio of 2019 Pop. to 2000 Pop.`,
             },
             stops: [
               {
                 value: 0.75,
                 color: [190, 48, 39, 255],
-                label: "< 0.75",
+                label: `< 0.75`,
               },
               {
                 value: 0.875,
@@ -65,7 +65,7 @@ export default {
               {
                 value: 1,
                 color: [235, 217, 216, 255],
-                label: "1",
+                label: `1`,
               },
               {
                 value: 1.25,
@@ -75,32 +75,31 @@ export default {
               {
                 value: 1.5,
                 color: [102, 113, 129, 255],
-                label: "> 1.5",
+                label: `> 1.5`,
               },
             ],
           },
         ],
       };
       // TODO add zoom level dependency and generalized features
-
+      // TODO make outFields a component prop
       const countyLayer = new FeatureLayer({
-        url:
-          "https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_time_series_2019_counties/FeatureServer/5",
+        url: this.featureLayerURL,
         renderer: colorRenderer,
         outFields: [
-          "OBJECTID",
-          "TOTPOP00",
-          "TSPOP10_CY",
-          "TSPOP11_CY",
-          "TSPOP12_CY",
-          "TSPOP13_CY",
-          "TSPOP14_CY",
-          "TSPOP15_CY",
-          "TSPOP16_CY",
-          "TSPOP17_CY",
-          "TSPOP18_CY",
-          "TOTPOP_CY",
-          "AREA_GEO",
+          `OBJECTID`,
+          `TOTPOP00`,
+          `TSPOP10_CY`,
+          `TSPOP11_CY`,
+          `TSPOP12_CY`,
+          `TSPOP13_CY`,
+          `TSPOP14_CY`,
+          `TSPOP15_CY`,
+          `TSPOP16_CY`,
+          `TSPOP17_CY`,
+          `TSPOP18_CY`,
+          `TOTPOP_CY`,
+          `AREA_GEO`,
         ], // we need to specify any additional fields
       });
 
@@ -130,11 +129,11 @@ export default {
         async () => {
           // All the resources in the MapView and the map have loaded. Now execute additional processes
           // TODO Refactor to make more sense
-          view.ui.add(homeButton, "top-left");
+          view.ui.add(homeButton, `top-left`);
 
           const layerView = await view.whenLayerView(countyLayer);
 
-          layerView.watch("updating", async value => {
+          layerView.watch(`updating`, async value => {
             if (!value) {
               let results = await layerView.queryFeatures({
                 geometry: view.extent,
@@ -157,7 +156,7 @@ export default {
         },
         error => {
           // Use the errback function to handle when the view doesn't load properly
-          console.log("The view's resources failed to load: ", error);
+          console.log(`The view's resources failed to load: `, error);
         }
       );
     });

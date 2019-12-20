@@ -1,21 +1,26 @@
 <template>
   <div id="app">
-    <Map id="map" />
+    <Map id="map" :featureLayerURL="this.featureLayerURL"></Map>
     <Chart id="chart" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Map from "./components/Map.vue";
 import Chart from "./components/Chart.vue";
 
 export default {
-  name: "app",
+  name: `app`,
   components: {
     Map,
     Chart,
   },
-  props: ["chartData"],
+  props: [`chartData`],
+  computed: {
+    ...mapState([`featureLayerURL`]),
+  },
 };
 </script>
 
