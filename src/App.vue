@@ -2,7 +2,9 @@
   <div id="app">
     <Map id="map" :featureLayerURL="this.featureLayerURL"></Map>
     <!-- <Chart id="chart" /> -->
-    <HorizontalBarChart />
+    <HorizontalBarChart
+      v-show="this.$store.getters.getSummaryStats.length > 0"
+    />
   </div>
 </template>
 

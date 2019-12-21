@@ -4,11 +4,11 @@
       :chart-data="datacollection"
       :options="chartOptions"
     ></horizontal-bar-chart>
-    <button @click="fillData()">Randomize</button>
   </div>
 </template>
 
 <script>
+// TODO UPDATE CHART LABELS AND REORDER
 import { mapState, mapGetters } from "vuex";
 import HorizontalBarChart from "./HorizontalBarChart.js";
 
@@ -20,6 +20,9 @@ export default {
     return {
       datacollection: {},
       chartOptions: {
+        legend: {
+          display: false,
+        },
         scales: {
           xAxes: [
             {
@@ -33,24 +36,11 @@ export default {
     };
   },
   mounted() {
-    this.fillData();
+    // this.getFieldAliases.then(console.log);
   },
   methods: {
     fillData() {
       this.datacollection = {
-        // labels: [this.getRandomInt() * -1, this.getRandomInt() * -1],
-        // datasets: [
-        //   {
-        //     label: `Data One`,
-        //     backgroundColor: `#f87979`,
-        //     data: [this.getRandomInt(), this.getRandomInt()],
-        //   },
-        //   {
-        //     label: `Data One`,
-        //     backgroundColor: `#f87979`,
-        //     data: [this.getRandomInt(), this.getRandomInt()],
-        //   },
-        // ],
         labels: this.getSummaryStats.map(obj => obj.key),
         datasets: [
           {
@@ -67,24 +57,12 @@ export default {
   },
   computed: {
     ...mapState([`mapViewData`, `featureLayerURL`]),
-    ...mapGetters([`getSummaryStats`]),
+    ...mapGetters([`getSummaryStats`, `getFieldAliases`]),
   },
   watch: {
     getSummaryStats: function() {
       this.fillData();
-      // console.log(this.getSummaryStats);
-      // for (let [key, value] of Object.entries(this.getSummaryStats)) {
-      //   console.log(`${key}: ${value}`);
-      // }
-      // let dataArray = Object.entries(this.getSummaryStats).map(entriesArray => {
-      //   return {
-      //     key: entriesArray[0],
-      //     value: entriesArray[1],
-      //   };
-      // });
-      // console.log(dataArray);
     },
-    datacollection: function() {},
   },
 };
 </script>

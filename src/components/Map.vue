@@ -3,17 +3,10 @@
 </template>
 
 <script>
-import { loadModules, setDefaultOptions } from "esri-loader";
+import { loadModules } from "esri-loader";
 import { mapMutations } from "vuex";
 // TODO remove setDefaultOptions once CDN switches
-setDefaultOptions({
-  version: `4.14`,
-  dojoConfig: {
-    has: {
-      "esri-native-promise": true,
-    },
-  },
-});
+
 export default {
   name: `web-map`,
   props: [`featureLayerURL`],
