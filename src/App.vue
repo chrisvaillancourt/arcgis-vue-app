@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <Map id="map" :featureLayerURL="this.featureLayerURL"></Map>
-    <Chart id="chart" />
+    <!-- <Chart id="chart" /> -->
+    <HorizontalBarChart />
   </div>
 </template>
 
@@ -9,13 +10,13 @@
 import { mapState } from "vuex";
 
 import Map from "./components/Map.vue";
-import Chart from "./components/Chart.vue";
+import HorizontalBarChart from "./components/HorizontalBarChart.vue";
 
 export default {
   name: `app`,
   components: {
     Map,
-    Chart,
+    HorizontalBarChart,
   },
   props: [`chartData`],
   computed: {

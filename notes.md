@@ -20,7 +20,11 @@
   mapshaper-xl bg\timeSeries_2019_bg.shp snap -simplify 80% -o bg\simplified\timeSeries_2019_bg_simplified80.shp
   mapshaper-xl bg\timeSeries_2019_bg.shp snap -simplify 90% -o bg\simplified\timeSeries_2019_bg_simplified90.shp
 
+## Misc
+
 - add to rects:
   :y=""
   :height=""
   :width=""
+
+- async mounted ?
