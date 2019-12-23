@@ -4,14 +4,30 @@
 
 <script>
 import { loadModules } from "esri-loader";
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 // TODO remove setDefaultOptions once CDN switches
-
+// TODO rename component to multi word
 export default {
   name: `web-map`,
   props: [`featureLayerURL`],
   methods: {
     ...mapMutations([`UPDATE_MAP_VIEW_DATA`]),
+    async getFieldAliases() {
+      let fields;
+      const response = await fetch(`${this.featureLayerURL}?f=pjson`);
+      if (response.ok) {
+        ({ fields } = await response.json());
+      } else {
+        fields = null;
+        console.error(`request error: ${response.status}`);
+      }
+      return fields;
+    },
+  },
+
+  created() {
+    // fetch field aliases
+    this.getFieldAliases().then(console.log);
   },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
@@ -151,6 +167,9 @@ export default {
 
               */
                 // this updates the data for the chart
+                console.log(
+                  results.features.map(feature => feature.attributes)
+                );
                 this.UPDATE_MAP_VIEW_DATA(
                   results.features.map(feature => feature.attributes)
                 );

@@ -19,6 +19,7 @@ export default {
   data: function() {
     return {
       datacollection: {},
+      fieldAliases: {},
       chartOptions: {
         legend: {
           display: false,
@@ -35,8 +36,13 @@ export default {
       },
     };
   },
-  mounted() {
-    // this.getFieldAliases.then(console.log);
+  mounted() {},
+  created() {
+    /* 
+     also can be:
+    created: function() {
+  }, 
+  */
   },
   methods: {
     fillData() {
@@ -56,8 +62,8 @@ export default {
     },
   },
   computed: {
-    ...mapState([`mapViewData`, `featureLayerURL`]),
-    ...mapGetters([`getSummaryStats`, `getFieldAliases`]),
+    ...mapState([`mapViewData`]),
+    ...mapGetters([`getSummaryStats`]),
   },
   watch: {
     getSummaryStats: function() {
