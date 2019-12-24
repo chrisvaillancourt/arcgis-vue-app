@@ -27,7 +27,7 @@ export default {
 
   created() {
     // fetch field aliases
-    this.getFieldAliases().then(console.log);
+    // this.getFieldAliases().then(console.log);
   },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
@@ -167,9 +167,6 @@ export default {
 
               */
                 // this updates the data for the chart
-                console.log(
-                  results.features.map(feature => feature.attributes)
-                );
                 this.UPDATE_MAP_VIEW_DATA(
                   results.features.map(feature => feature.attributes)
                 );

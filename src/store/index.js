@@ -10,8 +10,7 @@ export default new Vuex.Store({
   },
   // getters are like computed properties for stores
   getters: {
-    getSummaryStats: state => {
-     
+    getSummaryStats:  state => {
       const summaryObject = state.mapViewData.reduce((accumulator, currentObject) => {
 
         for (let [key, value] of Object.entries(currentObject)) {
@@ -39,22 +38,12 @@ export default new Vuex.Store({
       // summaryArray.sort((a, b) => a.alias.slice(0, 4) - b.alias.slice(0, 4));
       return summaryArray;
     },
-    // getFieldAliases: async state => {
-    //   let fields;
-    //   const response = await fetch(`${state.featureLayerURL}?f=pjson`);
-    //   if (response.ok) {
-    //     ({ fields } = await response.json());
-    //   } else {
-    //     fields = null;
-    //     console.error(`request error: ${response.status}`);
-    //   }
-    //   return fields;
-    // }
+    
     
   },
   mutations: {
     UPDATE_MAP_VIEW_DATA: (state, data) => state.mapViewData = [...data],
-    UPDATE_MAP_SUMMARY_DATA: (state, data) => state.mapViewSummaryData = [...data],
+    // UPDATE_MAP_SUMMARY_DATA: (state, data) => state.mapViewSummaryData = [...data],
   }, 
   actions: {
   },
