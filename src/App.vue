@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Map id="map" :featureLayerURL="this.featureLayerURL"></Map>
+    <EsriMap id="map" :featureLayerURL="this.featureLayerURL" />
     <!-- <Chart id="chart" /> -->
     <HorizontalBarChart
       v-show="this.$store.getters.getSummaryStats.length > 0"
@@ -11,13 +11,13 @@
 <script>
 import { mapState } from "vuex";
 
-import Map from "./components/Map.vue";
+import EsriMap from "./components/EsriMap.vue";
 import HorizontalBarChart from "./components/HorizontalBarChart.vue";
 
 export default {
   name: `app`,
   components: {
-    Map,
+    EsriMap,
     HorizontalBarChart,
   },
   props: [`chartData`],

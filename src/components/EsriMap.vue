@@ -8,7 +8,7 @@ import { mapMutations, mapState } from "vuex";
 // TODO remove setDefaultOptions once CDN switches
 // TODO rename component to multi word
 export default {
-  name: `web-map`,
+  name: `EsriMap`,
   props: [`featureLayerURL`],
   methods: {
     ...mapMutations([`UPDATE_MAP_VIEW_DATA`]),
@@ -31,6 +31,7 @@ export default {
   },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
+    //TODO update JS API to version 4.14
     loadModules(
       [
         `esri/Map`,
@@ -100,11 +101,81 @@ export default {
             },
           ],
         };
+        const popupTemplate = {
+          title: `{NAME}`,
+          content: `this is the popup.`,
+        };
         // TODO add zoom level dependency and generalized features
         // TODO make outFields a component prop
         const countyLayer = new FeatureLayer({
           url: this.featureLayerURL,
           renderer: colorRenderer,
+          maxScale: 1155581,
+          popupEnabled: true,
+          popupTemplate,
+          outFields: [
+            `OBJECTID`,
+            `TOTPOP00`,
+            `TSPOP10_CY`,
+            `TSPOP11_CY`,
+            `TSPOP12_CY`,
+            `TSPOP13_CY`,
+            `TSPOP14_CY`,
+            `TSPOP15_CY`,
+            `TSPOP16_CY`,
+            `TSPOP17_CY`,
+            `TSPOP18_CY`,
+            `TOTPOP_CY`,
+            `AREA_GEO`,
+          ], // we need to specify any additional fields
+        });
+        const zipCodeLayer = new FeatureLayer({
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
+          renderer: colorRenderer,
+          minScale: 847773,
+          maxScale: 241293,
+          outFields: [
+            `OBJECTID`,
+            `TOTPOP00`,
+            `TSPOP10_CY`,
+            `TSPOP11_CY`,
+            `TSPOP12_CY`,
+            `TSPOP13_CY`,
+            `TSPOP14_CY`,
+            `TSPOP15_CY`,
+            `TSPOP16_CY`,
+            `TSPOP17_CY`,
+            `TSPOP18_CY`,
+            `TOTPOP_CY`,
+            `AREA_GEO`,
+          ], // we need to specify any additional fields
+        });
+        const tractLayer = new FeatureLayer({
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
+          renderer: colorRenderer,
+          minScale: 144448,
+          maxScale: 0,
+          outFields: [
+            `OBJECTID`,
+            `TOTPOP00`,
+            `TSPOP10_CY`,
+            `TSPOP11_CY`,
+            `TSPOP12_CY`,
+            `TSPOP13_CY`,
+            `TSPOP14_CY`,
+            `TSPOP15_CY`,
+            `TSPOP16_CY`,
+            `TSPOP17_CY`,
+            `TSPOP18_CY`,
+            `TOTPOP_CY`,
+            `AREA_GEO`,
+          ], // we need to specify any additional fields
+        });
+        const blockGroupLayer = new FeatureLayer({
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
+          renderer: colorRenderer,
+          minScale: 52642,
+          maxScale: 0,
           outFields: [
             `OBJECTID`,
             `TOTPOP00`,
@@ -129,7 +200,7 @@ export default {
 
         const map = new Map({
           basemap,
-          layers: [countyLayer],
+          layers: [countyLayer, zipCodeLayer, tractLayer, blockGroupLayer],
         });
         const view = new MapView({
           container: this.$el,
@@ -137,20 +208,28 @@ export default {
           zoom: 8,
           center: [-118, 34],
         });
-
-        const homeButton = new Home({
-          view,
-        });
-
         // use view.when to do functionality after view is loaded
+        // view.watch(`scale`, function(newValue) {
+        //   console.log(`scale property changed: `, newValue);
+        // });
 
         view.when(
           async () => {
             // All the resources in the MapView and the map have loaded. Now execute additional processes
-            // TODO Refactor to make more sense
+            const homeButton = new Home({
+              view,
+            });
             view.ui.add(homeButton, `top-left`);
+            view.watch(`scale`, newValue =>
+              console.log(`scale changed: `, newValue)
+            );
 
-            const layerView = await view.whenLayerView(countyLayer);
+            // TODO Refactor to make more sense
+            const layerView = await view
+              .whenLayerView(zipCodeLayer)
+              .catch(console.error);
+            // TODO try changing feature layer URL based on scale value?
+            // what can  be made into a promise?
 
             layerView.watch(`updating`, async value => {
               if (!value) {
@@ -158,6 +237,9 @@ export default {
                   geometry: view.extent,
                   returnGeometry: false,
                 });
+                console.log(
+                  results.features.map(feature => feature.attributes)
+                );
                 // results.features is the array of features
                 // results.features.attributes is the actual data
                 // the below is the same as:
