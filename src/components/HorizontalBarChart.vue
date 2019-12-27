@@ -64,7 +64,7 @@ export default {
       };
     },
 
-    getFieldAliases: async function(state) {
+    getFieldAliases: async function() {
       let fields;
       const response = await fetch(`${this.featureLayerURL}?f=pjson`);
       if (response.ok) {
