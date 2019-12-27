@@ -5,33 +5,50 @@
 <script>
 import { loadModules } from "esri-loader";
 import { mapMutations, mapState } from "vuex";
+
 // TODO remove setDefaultOptions once CDN switches
 // TODO rename component to multi word
+// TODO add legend
+//TODO Add pop-ups
 export default {
   name: `EsriMap`,
   props: [`featureLayerURL`],
+  data: function() {
+    return {
+      view: {},
+    };
+  },
   methods: {
     ...mapMutations([`UPDATE_MAP_VIEW_DATA`]),
-    async getFieldAliases() {
-      let fields;
-      const response = await fetch(`${this.featureLayerURL}?f=pjson`);
-      if (response.ok) {
-        ({ fields } = await response.json());
-      } else {
-        fields = null;
-        console.error(`request error: ${response.status}`);
-      }
-      return fields;
+    setlayerViewForChart: async function(layerForChartData) {
+      const layerView = await this.view
+        .whenLayerView(layerForChartData)
+        .catch(console.error);
+
+      layerView.watch(`updating`, async isUpdating => {
+        if (!isUpdating) {
+          let results = await layerView
+            .queryFeatures({
+              geometry: this.view.extent,
+              returnGeometry: false,
+            })
+            .catch(console.error);
+
+          // results.features is the array of features
+          // results.features.attributes is the actual data
+
+          // this updates the data for the chart
+          this.UPDATE_MAP_VIEW_DATA(
+            results.features.map(feature => feature.attributes)
+          );
+        }
+      });
     },
   },
 
-  created() {
-    // fetch field aliases
-    // this.getFieldAliases().then(console.log);
-  },
+  created() {},
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
-    //TODO update JS API to version 4.14
     loadModules(
       [
         `esri/Map`,
@@ -110,9 +127,11 @@ export default {
         const countyLayer = new FeatureLayer({
           url: this.featureLayerURL,
           renderer: colorRenderer,
-          maxScale: 1155581,
+          // maxScale: 1155581,
           popupEnabled: true,
+          visible: true,
           popupTemplate,
+          title: `countyLayer`,
           outFields: [
             `OBJECTID`,
             `TOTPOP00`,
@@ -132,8 +151,10 @@ export default {
         const zipCodeLayer = new FeatureLayer({
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
           renderer: colorRenderer,
-          minScale: 847773,
-          maxScale: 241293,
+          // minScale: 847773,
+          // maxScale: 241293,
+          visible: false,
+          title: `zipCodeLayer`,
           outFields: [
             `OBJECTID`,
             `TOTPOP00`,
@@ -153,8 +174,10 @@ export default {
         const tractLayer = new FeatureLayer({
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
           renderer: colorRenderer,
-          minScale: 144448,
-          maxScale: 0,
+          // minScale: 144448,
+          // maxScale: 0,
+          visible: false,
+          title: `tractLayer`,
           outFields: [
             `OBJECTID`,
             `TOTPOP00`,
@@ -174,8 +197,10 @@ export default {
         const blockGroupLayer = new FeatureLayer({
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
           renderer: colorRenderer,
-          minScale: 52642,
-          maxScale: 0,
+          // minScale: 52642,
+          // maxScale: 0,
+          visible: false,
+          title: `blockGroupLayer`,
           outFields: [
             `OBJECTID`,
             `TOTPOP00`,
@@ -202,7 +227,7 @@ export default {
           basemap,
           layers: [countyLayer, zipCodeLayer, tractLayer, blockGroupLayer],
         });
-        const view = new MapView({
+        this.view = new MapView({
           container: this.$el,
           map,
           zoom: 8,
@@ -212,43 +237,97 @@ export default {
         // view.watch(`scale`, function(newValue) {
         //   console.log(`scale property changed: `, newValue);
         // });
+        // TODO move to component method
+        function setActiveLayer({ layerCollection, visibleLayer }) {
+          layerCollection.forEach(layer => {
+            if (layer == visibleLayer) {
+              layer.visible = true;
+            } else {
+              layer.visible = false;
+            }
+          });
+        }
 
-        view.when(
+        this.view.when(
           async () => {
+            //TODO check if async is needed
             // All the resources in the MapView and the map have loaded. Now execute additional processes
-            const homeButton = new Home({
-              view,
-            });
-            view.ui.add(homeButton, `top-left`);
-            view.watch(`scale`, newValue =>
-              console.log(`scale changed: `, newValue)
-            );
 
-            // TODO Refactor to make more sense
-            const layerView = await view
+            const homeButton = new Home({
+              view: this.view,
+            });
+            this.view.ui.add(homeButton, `top-left`);
+
+            let targetLayer = countyLayer; //targetLayer will be used for layer visibility and setting up the layerView for the chart
+
+            this.view.watch(`zoom`, newZoomVal => {
+              if (newZoomVal > 8 && newZoomVal <= 10) {
+                targetLayer = zipCodeLayer;
+              } else if (newZoomVal > 10 && newZoomVal <= 12) {
+                targetLayer = tractLayer;
+              } else if (newZoomVal > 12) {
+                targetLayer = blockGroupLayer;
+              } else {
+                targetLayer = countyLayer;
+              }
+              setActiveLayer({
+                layerCollection: map.layers,
+                visibleLayer: targetLayer,
+              });
+            });
+            // TODO refactor and make less DRY
+            const countylayerView = await this.view
+              .whenLayerView(countyLayer)
+              .catch(console.error);
+            const zipCodelayerView = await this.view
               .whenLayerView(zipCodeLayer)
               .catch(console.error);
-            // TODO try changing feature layer URL based on scale value?
-            // what can  be made into a promise?
+            const tractLayerView = await this.view
+              .whenLayerView(tractLayer)
+              .catch(console.error);
+            const blockGroupLayerView = await this.view
+              .whenLayerView(blockGroupLayer)
+              .catch(console.error);
 
-            layerView.watch(`updating`, async value => {
-              if (!value) {
-                let results = await layerView.queryFeatures({
-                  geometry: view.extent,
+            countylayerView.watch(`updating`, async isUpdating => {
+              if (!isUpdating) {
+                let results = await countylayerView.queryFeatures({
+                  geometry: this.view.extent,
                   returnGeometry: false,
                 });
-                console.log(
+                this.UPDATE_MAP_VIEW_DATA(
                   results.features.map(feature => feature.attributes)
                 );
-                // results.features is the array of features
-                // results.features.attributes is the actual data
-                // the below is the same as:
-                /*
-              let data = results.features.map(feature => feature.attributes);
-              this.UPDATE_MAP_VIEW_DATA(data)
-
-              */
-                // this updates the data for the chart
+              }
+            });
+            zipCodelayerView.watch(`updating`, async isUpdating => {
+              if (!isUpdating) {
+                let results = await countylayerView.queryFeatures({
+                  geometry: this.view.extent,
+                  returnGeometry: false,
+                });
+                this.UPDATE_MAP_VIEW_DATA(
+                  results.features.map(feature => feature.attributes)
+                );
+              }
+            });
+            tractLayerView.watch(`updating`, async isUpdating => {
+              if (!isUpdating) {
+                let results = await tractLayerView.queryFeatures({
+                  geometry: this.view.extent,
+                  returnGeometry: false,
+                });
+                this.UPDATE_MAP_VIEW_DATA(
+                  results.features.map(feature => feature.attributes)
+                );
+              }
+            });
+            blockGroupLayerView.watch(`updating`, async isUpdating => {
+              if (!isUpdating) {
+                let results = await blockGroupLayerView.queryFeatures({
+                  geometry: this.view.extent,
+                  returnGeometry: false,
+                });
                 this.UPDATE_MAP_VIEW_DATA(
                   results.features.map(feature => feature.attributes)
                 );
@@ -257,11 +336,11 @@ export default {
           },
           error => {
             // Use the errback function to handle when the view doesn't load properly
-            console.log(`The view's resources failed to load: `, error);
+            console.error(`The view's resources failed to load: `, error);
           }
         );
       })
-      .catch(err => console.log);
+      .catch(console.error);
   },
   beforeDestroy() {
     if (this.view) {
