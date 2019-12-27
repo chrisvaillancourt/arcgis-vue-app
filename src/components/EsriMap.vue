@@ -129,8 +129,8 @@ export default {
           renderer: colorRenderer,
           // maxScale: 1155581,
           popupEnabled: true,
-          visible: true,
           popupTemplate,
+          visible: true,
           title: `countyLayer`,
           outFields: [
             `OBJECTID`,
@@ -153,6 +153,8 @@ export default {
           renderer: colorRenderer,
           // minScale: 847773,
           // maxScale: 241293,
+          popupEnabled: true,
+          popupTemplate,
           visible: false,
           title: `zipCodeLayer`,
           outFields: [
@@ -177,6 +179,8 @@ export default {
           // minScale: 144448,
           // maxScale: 0,
           visible: false,
+          popupEnabled: true,
+          popupTemplate,
           title: `tractLayer`,
           outFields: [
             `OBJECTID`,
@@ -200,6 +204,8 @@ export default {
           // minScale: 52642,
           // maxScale: 0,
           visible: false,
+          popupEnabled: true,
+          popupTemplate,
           title: `blockGroupLayer`,
           outFields: [
             `OBJECTID`,
@@ -355,6 +361,8 @@ export default {
 div {
   padding: 0;
   margin: 0;
+}
+#map {
   width: 100%;
   height: 100%;
 }

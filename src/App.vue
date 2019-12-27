@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <EsriMap id="map" :featureLayerURL="this.featureLayerURL" />
-    <!-- <Chart id="chart" /> -->
     <HorizontalBarChart
+      id="chart"
       v-show="this.$store.getters.getSummaryStats.length > 0"
     />
   </div>
@@ -15,7 +15,7 @@ import EsriMap from "./components/EsriMap.vue";
 import HorizontalBarChart from "./components/HorizontalBarChart.vue";
 
 export default {
-  name: `app`,
+  name: `App`,
   components: {
     EsriMap,
     HorizontalBarChart,
@@ -37,9 +37,9 @@ body {
 }
 
 #app {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "Map Chart";
+  /* display: grid; */
+  /* grid-template-columns: 70fr 20fr 10fr; */
+  /* grid-template-areas: "Map Chart"; */
   padding: 0;
   margin: 0;
   width: 100%;
@@ -49,9 +49,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 #map {
-  grid-area: Map;
+  /* grid-area: Map; */
+  height: 100%;
+  width: 100%;
 }
 #chart {
-  grid-area: Chart;
+  /* grid-area: Chart; */
+  z-index: 10;
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  bottom: 6%;
+  left: 55%;
 }
 </style>

@@ -125,7 +125,8 @@ export default {
 
 <style>
 .small {
-  max-width: 600px;
-  margin: 150px auto;
+  max-width: 500px;
+  /* margin: 150px auto; */
+  background-color: #fff;
 }
 </style>
