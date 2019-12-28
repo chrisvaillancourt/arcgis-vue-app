@@ -3,9 +3,12 @@
 </template>
 
 <script>
-import { loadModules } from "esri-loader";
-import { mapMutations, mapState } from "vuex";
-
+import { loadModules, setDefaultOptions } from "esri-loader";
+import { mapMutations } from "vuex";
+setDefaultOptions({
+  version: `4.13`,
+  css: true,
+});
 // TODO remove setDefaultOptions once CDN switches
 // TODO rename component to multi word
 // TODO add legend
@@ -49,19 +52,14 @@ export default {
   created() {},
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
-    loadModules(
-      [
-        `esri/Map`,
-        `esri/views/MapView`,
-        `esri/widgets/Home`,
-        `esri/layers/VectorTileLayer`,
-        `esri/Basemap`,
-        `esri/layers/FeatureLayer`,
-      ],
-      {
-        css: true,
-      }
-    )
+    loadModules([
+      `esri/Map`,
+      `esri/views/MapView`,
+      `esri/widgets/Home`,
+      `esri/layers/VectorTileLayer`,
+      `esri/Basemap`,
+      `esri/layers/FeatureLayer`,
+    ])
       .then(([Map, MapView, Home, VectorTileLayer, Basemap, FeatureLayer]) => {
         const vectorBaseLayer = new VectorTileLayer({
           // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
@@ -119,7 +117,7 @@ export default {
           ],
         };
         const popupTemplate = {
-          title: `{NAME}`,
+          title: `{NAME_1} {NAME}`,
           content: `this is the popup.`,
         };
         // TODO add zoom level dependency and generalized features
@@ -297,10 +295,12 @@ export default {
 
             countylayerView.watch(`updating`, async isUpdating => {
               if (!isUpdating) {
-                let results = await countylayerView.queryFeatures({
-                  geometry: this.view.extent,
-                  returnGeometry: false,
-                });
+                let results = await countylayerView
+                  .queryFeatures({
+                    geometry: this.view.extent,
+                    returnGeometry: false,
+                  })
+                  .catch(console.error);
                 this.UPDATE_MAP_VIEW_DATA(
                   results.features.map(feature => feature.attributes)
                 );
@@ -358,10 +358,10 @@ export default {
 </script>
 
 <style scoped>
-div {
+/* div {
   padding: 0;
   margin: 0;
-}
+} */
 #map {
   width: 100%;
   height: 100%;

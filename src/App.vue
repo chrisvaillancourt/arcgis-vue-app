@@ -30,36 +30,33 @@ export default {
 <style>
 html,
 body {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
 }
-
-#app {
-  /* display: grid; */
-  /* grid-template-columns: 70fr 20fr 10fr; */
-  /* grid-template-areas: "Map Chart"; */
+* {
   padding: 0;
   margin: 0;
-  width: 100%;
-  height: 100%;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+#app {
+  display: grid;
+  grid-template-columns: repeat(20, 5fr);
+  grid-template-rows: repeat(20, 5fr);
+
+  width: 100%;
+  height: 100%;
+}
 #map {
-  /* grid-area: Map; */
   height: 100%;
   width: 100%;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
 }
 #chart {
-  /* grid-area: Chart; */
+  grid-column: 12 / 19;
+  grid-row: 10 / 20;
   z-index: 10;
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  bottom: 6%;
-  left: 55%;
 }
 </style>

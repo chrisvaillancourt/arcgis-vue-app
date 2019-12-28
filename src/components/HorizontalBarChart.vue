@@ -1,14 +1,18 @@
 <template>
-  <div class="small">
-    <horizontal-bar-chart
-      :chart-data="datacollection"
-      :options="chartOptions"
-    ></horizontal-bar-chart>
+  <div class="wrapper">
+    <div class="chart-container">
+      <horizontal-bar-chart
+        id="chart"
+        :chart-data="datacollection"
+        :options="chartOptions"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-// TODO UPDATE CHART LABELS AND REORDER
+// TODO Add chart title & format hover interaction
+// TODO explain how numbers are calculated
 import { mapState, mapGetters } from "vuex";
 import HorizontalBarChart from "./HorizontalBarChart.js";
 
@@ -22,14 +26,55 @@ export default {
       chartData: {},
       fieldAliases: {},
       chartOptions: {
+        title: {
+          display: true,
+          fontFamily: `"Avenir", Helvetica, Arial, sans-serif`,
+          fontColor: `#2e2f3e`,
+          fontStyle: `normal`,
+          fontSize: 18,
+          text: `Historical Population Time Series`,
+        },
+        tooltips: {
+          backgroundColor: `#2e2f3e`,
+          titleFontFamily: `"Avenir", Helvetica, Arial, sans-serif`,
+          bodyFontFamily: `"Avenir", Helvetica, Arial, sans-serif`,
+          displayColors: false,
+          callbacks: {
+            label: function(tooltipItem) {
+              return tooltipItem.value
+                .toString()
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1,`);
+            },
+          },
+        },
+        devicePixelRatio: 2,
+        maintainAspectRatio: false,
         legend: {
           display: false,
         },
         scales: {
           xAxes: [
             {
+              type: `linear`,
               ticks: {
                 beginAtZero: true,
+                callback: function(value, index, values) {
+                  return value
+                    .toString()
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1,`);
+                },
+              },
+              gridLines: {
+                display: true,
+                drawBorder: true,
+                drawOnChartArea: false,
+              },
+            },
+          ],
+          yAxes: [
+            {
+              gridLines: {
+                display: false,
               },
             },
           ],
@@ -39,10 +84,10 @@ export default {
   },
   mounted() {},
   created() {
-    /* 
+    /*
      also can be:
     created: function() {
-  }, 
+  },
   */
     this.getFieldAliases()
       .then(fieldAliasesObj => {
@@ -124,9 +169,17 @@ export default {
 </script>
 
 <style>
-.small {
-  max-width: 500px;
+.wrapper {
+  /* max-width: 500px; */
+  /* max-height: 500px; */
   /* margin: 150px auto; */
   background-color: #fff;
+  border-radius: 2%;
+  padding: 10px;
+}
+.chart-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 </style>
