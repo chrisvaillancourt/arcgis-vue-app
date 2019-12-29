@@ -13,6 +13,7 @@ setDefaultOptions({
 // TODO rename component to multi word
 // TODO add legend
 //TODO Add pop-ups
+// TODO overwrite boundary data to match field names
 export default {
   name: `EsriMap`,
   props: [`featureLayerURL`],
