@@ -6,7 +6,7 @@ export default new Vuex.Store({
   state: {
     mapViewData: [{}],
     mapViewSummaryData:[{}],
-    featureLayerURL: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/1`,
+    dataAliasesURL: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/1`,
   },
   // getters are like computed properties for stores
   getters: {

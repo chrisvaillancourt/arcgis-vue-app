@@ -10,7 +10,6 @@ setDefaultOptions({
   css: true,
 });
 // TODO remove setDefaultOptions once CDN switches
-// TODO rename component to multi word
 // TODO add legend
 //TODO Add pop-ups
 // TODO overwrite boundary data to match field names
@@ -20,6 +19,92 @@ export default {
   data: function() {
     return {
       view: {},
+      featureLayers: [
+        {
+          title: `County`,
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/1`,
+          visible: true,
+        },
+        {
+          title: `ZIP Code`,
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
+          visible: false,
+        },
+        {
+          title: `Census Tract`,
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
+          visible: false,
+        },
+        {
+          title: `Census Block Group`,
+          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
+          visible: false,
+        },
+      ],
+      outFields: [
+        `OBJECTID`,
+        `TOTPOP00`,
+        `TSPOP10_CY`,
+        `TSPOP11_CY`,
+        `TSPOP12_CY`,
+        `TSPOP13_CY`,
+        `TSPOP14_CY`,
+        `TSPOP15_CY`,
+        `TSPOP16_CY`,
+        `TSPOP17_CY`,
+        `TSPOP18_CY`,
+        `TOTPOP_CY`,
+        `AREA_GEO`,
+      ],
+      colorRenderer: {
+        type: `simple`,
+        symbol: {
+          type: `simple-fill`,
+          style: `none`,
+          outline: { width: 1, color: [194, 194, 194, 0.15] },
+        },
+        visualVariables: [
+          {
+            type: `color`,
+            field: `TOTPOP_CY`,
+            normalizationField: `TOTPOP00`,
+            legendOptions: {
+              title: `Ratio of 2019 Pop. to 2000 Pop.`,
+            },
+            stops: [
+              {
+                value: 0.75,
+                color: [190, 48, 39, 255],
+                label: `< 0.75`,
+              },
+              {
+                value: 0.875,
+                color: [213, 133, 127, 255],
+                label: null,
+              },
+              {
+                value: 1,
+                color: [235, 217, 216, 255],
+                label: `1`,
+              },
+              {
+                value: 1.25,
+                color: [151, 162, 179, 255],
+                label: null,
+              },
+              {
+                value: 1.5,
+                color: [102, 113, 129, 255],
+                label: `> 1.5`,
+              },
+            ],
+          },
+        ],
+      },
+      popupTemplate: {
+        title: `{NAME_1} {NAME}`,
+        content: `this is the popup.`,
+      },
     };
   },
   methods: {
@@ -60,293 +145,165 @@ export default {
       `esri/layers/VectorTileLayer`,
       `esri/Basemap`,
       `esri/layers/FeatureLayer`,
+      `esri/widgets/Legend`,
+      `esri/widgets/Expand`,
     ])
-      .then(([Map, MapView, Home, VectorTileLayer, Basemap, FeatureLayer]) => {
-        const vectorBaseLayer = new VectorTileLayer({
-          // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
-          url: `https://www.arcgis.com/sharing/rest/content/items/291da5eab3a0412593b66d384379f89f/resources/styles/root.json`,
-        });
-        // TODO add local vector style reference
-        const vectorBaseReference = new VectorTileLayer({
-          // item page: https://www.arcgis.com/home/item.html?id=1768e8369a214dfab4e2167d5c5f2454
-          url: `https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json`,
-        });
-
-        const colorRenderer = {
-          type: `simple`,
-          symbol: {
-            type: `simple-fill`,
-            style: `none`,
-            outline: { width: 1, color: [194, 194, 194, 0.15] },
-          },
-          visualVariables: [
-            {
-              type: `color`,
-              field: `TOTPOP_CY`,
-              normalizationField: `TOTPOP00`,
-              legendOptions: {
-                title: `Ratio of 2019 Pop. to 2000 Pop.`,
-              },
-              stops: [
-                {
-                  value: 0.75,
-                  color: [190, 48, 39, 255],
-                  label: `< 0.75`,
-                },
-                {
-                  value: 0.875,
-                  color: [213, 133, 127, 255],
-                  label: null,
-                },
-                {
-                  value: 1,
-                  color: [235, 217, 216, 255],
-                  label: `1`,
-                },
-                {
-                  value: 1.25,
-                  color: [151, 162, 179, 255],
-                  label: null,
-                },
-                {
-                  value: 1.5,
-                  color: [102, 113, 129, 255],
-                  label: `> 1.5`,
-                },
-              ],
-            },
-          ],
-        };
-        const popupTemplate = {
-          title: `{NAME_1} {NAME}`,
-          content: `this is the popup.`,
-        };
-        // TODO add zoom level dependency and generalized features
-        // TODO make outFields a component prop
-        const countyLayer = new FeatureLayer({
-          url: this.featureLayerURL,
-          renderer: colorRenderer,
-          // maxScale: 1155581,
-          popupEnabled: true,
-          popupTemplate,
-          visible: true,
-          title: `countyLayer`,
-          outFields: [
-            `OBJECTID`,
-            `TOTPOP00`,
-            `TSPOP10_CY`,
-            `TSPOP11_CY`,
-            `TSPOP12_CY`,
-            `TSPOP13_CY`,
-            `TSPOP14_CY`,
-            `TSPOP15_CY`,
-            `TSPOP16_CY`,
-            `TSPOP17_CY`,
-            `TSPOP18_CY`,
-            `TOTPOP_CY`,
-            `AREA_GEO`,
-          ], // we need to specify any additional fields
-        });
-        const zipCodeLayer = new FeatureLayer({
-          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
-          renderer: colorRenderer,
-          // minScale: 847773,
-          // maxScale: 241293,
-          popupEnabled: true,
-          popupTemplate,
-          visible: false,
-          title: `zipCodeLayer`,
-          outFields: [
-            `OBJECTID`,
-            `TOTPOP00`,
-            `TSPOP10_CY`,
-            `TSPOP11_CY`,
-            `TSPOP12_CY`,
-            `TSPOP13_CY`,
-            `TSPOP14_CY`,
-            `TSPOP15_CY`,
-            `TSPOP16_CY`,
-            `TSPOP17_CY`,
-            `TSPOP18_CY`,
-            `TOTPOP_CY`,
-            `AREA_GEO`,
-          ], // we need to specify any additional fields
-        });
-        const tractLayer = new FeatureLayer({
-          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
-          renderer: colorRenderer,
-          // minScale: 144448,
-          // maxScale: 0,
-          visible: false,
-          popupEnabled: true,
-          popupTemplate,
-          title: `tractLayer`,
-          outFields: [
-            `OBJECTID`,
-            `TOTPOP00`,
-            `TSPOP10_CY`,
-            `TSPOP11_CY`,
-            `TSPOP12_CY`,
-            `TSPOP13_CY`,
-            `TSPOP14_CY`,
-            `TSPOP15_CY`,
-            `TSPOP16_CY`,
-            `TSPOP17_CY`,
-            `TSPOP18_CY`,
-            `TOTPOP_CY`,
-            `AREA_GEO`,
-          ], // we need to specify any additional fields
-        });
-        const blockGroupLayer = new FeatureLayer({
-          url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
-          renderer: colorRenderer,
-          // minScale: 52642,
-          // maxScale: 0,
-          visible: false,
-          popupEnabled: true,
-          popupTemplate,
-          title: `blockGroupLayer`,
-          outFields: [
-            `OBJECTID`,
-            `TOTPOP00`,
-            `TSPOP10_CY`,
-            `TSPOP11_CY`,
-            `TSPOP12_CY`,
-            `TSPOP13_CY`,
-            `TSPOP14_CY`,
-            `TSPOP15_CY`,
-            `TSPOP16_CY`,
-            `TSPOP17_CY`,
-            `TSPOP18_CY`,
-            `TOTPOP_CY`,
-            `AREA_GEO`,
-          ], // we need to specify any additional fields
-        });
-
-        const basemap = new Basemap({
-          baseLayers: [vectorBaseLayer],
-          referenceLayers: [vectorBaseReference],
-        });
-
-        const map = new Map({
-          basemap,
-          layers: [countyLayer, zipCodeLayer, tractLayer, blockGroupLayer],
-        });
-        this.view = new MapView({
-          container: this.$el,
-          map,
-          zoom: 8,
-          center: [-118, 34],
-        });
-        // use view.when to do functionality after view is loaded
-        // view.watch(`scale`, function(newValue) {
-        //   console.log(`scale property changed: `, newValue);
-        // });
-        // TODO move to component method
-        function setActiveLayer({ layerCollection, visibleLayer }) {
-          layerCollection.forEach(layer => {
-            if (layer == visibleLayer) {
-              layer.visible = true;
-            } else {
-              layer.visible = false;
-            }
+      .then(
+        ([
+          Map,
+          MapView,
+          Home,
+          VectorTileLayer,
+          Basemap,
+          FeatureLayer,
+          Legend,
+          Expand,
+        ]) => {
+          const vectorBaseLayer = new VectorTileLayer({
+            // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
+            url: `https://www.arcgis.com/sharing/rest/content/items/291da5eab3a0412593b66d384379f89f/resources/styles/root.json`,
           });
-        }
+          // TODO add local vector style reference
+          const vectorBaseReference = new VectorTileLayer({
+            // item page: https://www.arcgis.com/home/item.html?id=1768e8369a214dfab4e2167d5c5f2454
+            url: `https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json`,
+          });
 
-        this.view.when(
-          async () => {
-            //TODO check if async is needed
-            // All the resources in the MapView and the map have loaded. Now execute additional processes
-
-            const homeButton = new Home({
-              view: this.view,
-            });
-            this.view.ui.add(homeButton, `top-left`);
-
-            let targetLayer = countyLayer; //targetLayer will be used for layer visibility and setting up the layerView for the chart
-
-            this.view.watch(`zoom`, newZoomVal => {
-              if (newZoomVal > 8 && newZoomVal <= 10) {
-                targetLayer = zipCodeLayer;
-              } else if (newZoomVal > 10 && newZoomVal <= 12) {
-                targetLayer = tractLayer;
-              } else if (newZoomVal > 12) {
-                targetLayer = blockGroupLayer;
-              } else {
-                targetLayer = countyLayer;
-              }
-              setActiveLayer({
-                layerCollection: map.layers,
-                visibleLayer: targetLayer,
+          const generateFeatureLayerCollection = () => {
+            return this.featureLayers.map(layerInfo => {
+              return new FeatureLayer({
+                url: layerInfo.url,
+                renderer: this.colorRenderer,
+                popupEnabled: true,
+                popupTemplate: this.popupTemplate,
+                visible: layerInfo.visible,
+                title: layerInfo.title,
+                outFields: [
+                  `OBJECTID`,
+                  `TOTPOP00`,
+                  `TSPOP10_CY`,
+                  `TSPOP11_CY`,
+                  `TSPOP12_CY`,
+                  `TSPOP13_CY`,
+                  `TSPOP14_CY`,
+                  `TSPOP15_CY`,
+                  `TSPOP16_CY`,
+                  `TSPOP17_CY`,
+                  `TSPOP18_CY`,
+                  `TOTPOP_CY`,
+                  `AREA_GEO`,
+                ], // we need to specify any additional fields
               });
             });
-            // TODO refactor and make less DRY
-            const countylayerView = await this.view
-              .whenLayerView(countyLayer)
-              .catch(console.error);
-            const zipCodelayerView = await this.view
-              .whenLayerView(zipCodeLayer)
-              .catch(console.error);
-            const tractLayerView = await this.view
-              .whenLayerView(tractLayer)
-              .catch(console.error);
-            const blockGroupLayerView = await this.view
-              .whenLayerView(blockGroupLayer)
-              .catch(console.error);
+          };
 
-            countylayerView.watch(`updating`, async isUpdating => {
-              if (!isUpdating) {
-                let results = await countylayerView
-                  .queryFeatures({
-                    geometry: this.view.extent,
-                    returnGeometry: false,
-                  })
-                  .catch(console.error);
-                this.UPDATE_MAP_VIEW_DATA(
-                  results.features.map(feature => feature.attributes)
-                );
+          const basemap = new Basemap({
+            baseLayers: [vectorBaseLayer],
+            referenceLayers: [vectorBaseReference],
+          });
+
+          const map = new Map({
+            basemap,
+            layers: generateFeatureLayerCollection(),
+          });
+
+          this.view = new MapView({
+            container: this.$el,
+            map,
+            zoom: 8,
+            center: [-118, 34],
+          });
+
+          const legend = new Legend({
+            view: this.view,
+            container: document.createElement(`div`),
+            id: `legendID`,
+          });
+
+          const legendExpandWidget = new Expand({
+            view: this.view,
+            content: legend,
+            expanded: true,
+            mode: `floating`,
+          });
+
+          // use view.when to do functionality after view is loaded
+          // view.watch(`scale`, function(newValue) {
+          //   console.log(`scale property changed: `, newValue);
+          // });
+          // TODO move to component method
+          function setActiveLayer({ layerCollection, visibleLayer }) {
+            layerCollection.forEach(layer => {
+              if (layer == visibleLayer) {
+                layer.visible = true;
+              } else {
+                layer.visible = false;
               }
             });
-            zipCodelayerView.watch(`updating`, async isUpdating => {
-              if (!isUpdating) {
-                let results = await countylayerView.queryFeatures({
-                  geometry: this.view.extent,
-                  returnGeometry: false,
-                });
-                this.UPDATE_MAP_VIEW_DATA(
-                  results.features.map(feature => feature.attributes)
-                );
-              }
-            });
-            tractLayerView.watch(`updating`, async isUpdating => {
-              if (!isUpdating) {
-                let results = await tractLayerView.queryFeatures({
-                  geometry: this.view.extent,
-                  returnGeometry: false,
-                });
-                this.UPDATE_MAP_VIEW_DATA(
-                  results.features.map(feature => feature.attributes)
-                );
-              }
-            });
-            blockGroupLayerView.watch(`updating`, async isUpdating => {
-              if (!isUpdating) {
-                let results = await blockGroupLayerView.queryFeatures({
-                  geometry: this.view.extent,
-                  returnGeometry: false,
-                });
-                this.UPDATE_MAP_VIEW_DATA(
-                  results.features.map(feature => feature.attributes)
-                );
-              }
-            });
-          },
-          error => {
-            // Use the errback function to handle when the view doesn't load properly
-            console.error(`The view's resources failed to load: `, error);
           }
-        );
-      })
+          function getMapLayerByTitle(layerTitle) {
+            return map.layers.items.filter(
+              layer => layer.title == layerTitle
+            )[0];
+          }
+          this.view.when(
+            () => {
+              // All the resources in the MapView and the map have loaded. Now execute additional processes
+
+              const homeButton = new Home({
+                view: this.view,
+              });
+              this.view.ui.add(homeButton, `top-left`);
+              this.view.ui.add(legendExpandWidget, `top-left`);
+
+              let targetLayer = getMapLayerByTitle(`County`); //targetLayer will be used for layer visibility and setting up the layerView for the chart
+
+              this.view.watch(`zoom`, newZoomVal => {
+                if (newZoomVal > 8 && newZoomVal <= 10) {
+                  targetLayer = getMapLayerByTitle(`ZIP Code`);
+                } else if (newZoomVal > 10 && newZoomVal <= 12) {
+                  targetLayer = getMapLayerByTitle(`Census Tract`);
+                } else if (newZoomVal > 12) {
+                  targetLayer = getMapLayerByTitle(`Census Block Group`);
+                } else {
+                  targetLayer = getMapLayerByTitle(`County`);
+                }
+                setActiveLayer({
+                  layerCollection: map.layers,
+                  visibleLayer: targetLayer,
+                });
+              });
+              // set up a view layer fore each layer in the map and create client side query on each view
+              map.layers.forEach(async layer => {
+                const layerView = await this.view
+                  .whenLayerView(layer)
+                  .catch(console.error);
+                layerView.watch(`updating`, async isUpdating => {
+                  if (!isUpdating) {
+                    let results = await layerView
+                      .queryFeatures({
+                        geometry: this.view.extent,
+                        returnGeometry: false,
+                      })
+                      .catch(console.error);
+                    this.UPDATE_MAP_VIEW_DATA(
+                      results.features.map(feature => feature.attributes)
+                    );
+                  }
+                });
+              });
+              const legendLabel = document.querySelector(
+                `.esri-legend__layer-table.esri-legend__layer-table--size-ramp`
+              );
+              console.log(legendLabel);
+            },
+            error => {
+              // Use the errback function to handle when the view doesn't load properly
+              console.error(`The view's resources failed to load: `, error);
+            }
+          );
+        }
+      )
       .catch(console.error);
   },
   beforeDestroy() {
@@ -366,5 +323,9 @@ export default {
 #map {
   width: 100%;
   height: 100%;
+}
+
+.esri-legend__layer-table.esri-legend__layer-table--size-ramp {
+  display: none !important;
 }
 </style>

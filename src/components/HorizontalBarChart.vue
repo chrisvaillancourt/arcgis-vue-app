@@ -1,11 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="chart-container">
-      <horizontal-bar-chart
-        id="chart"
-        :chart-data="datacollection"
-        :options="chartOptions"
-      />
+      <horizontal-bar-chart id="chart" :chart-data="datacollection" :options="chartOptions" />
     </div>
   </div>
 </template>
@@ -111,7 +107,7 @@ export default {
 
     getFieldAliases: async function() {
       let fields;
-      const response = await fetch(`${this.featureLayerURL}?f=pjson`);
+      const response = await fetch(`${this.dataAliasesURL}?f=pjson`);
       if (response.ok) {
         ({ fields } = await response.json());
       } else {
@@ -122,7 +118,7 @@ export default {
     },
   },
   computed: {
-    ...mapState([`mapViewData`, `mapViewSummaryData`, `featureLayerURL`]),
+    ...mapState([`mapViewData`, `mapViewSummaryData`, `dataAliasesURL`]),
     ...mapGetters([`getSummaryStats`]),
     summarizeMapViewData: function() {
       const summaryObject = this.mapViewData.reduce(

@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <EsriMap id="map" :featureLayerURL="this.featureLayerURL" />
-    <HorizontalBarChart
-      id="chart"
-      v-show="this.$store.getters.getSummaryStats.length > 0"
-    />
+    <EsriMap id="map" :featureLayerURL="this.dataAliasesURL" />
+    <HorizontalBarChart id="chart" v-show="this.$store.getters.getSummaryStats.length > 0" />
   </div>
 </template>
 
@@ -22,7 +19,7 @@ export default {
   },
   props: [`chartData`],
   computed: {
-    ...mapState([`featureLayerURL`]),
+    ...mapState([`dataAliasesURL`]),
   },
 };
 </script>
@@ -58,5 +55,9 @@ body {
   grid-column: 12 / 19;
   grid-row: 10 / 20;
   z-index: 10;
+}
+.esri-legend__layer-table.esri-legend__layer-table--size-ramp:first-child {
+  /* removes unnecessary legend element */
+  display: none;
 }
 </style>
