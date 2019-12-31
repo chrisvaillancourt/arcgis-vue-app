@@ -7,7 +7,7 @@ import { loadModules, setDefaultOptions } from "esri-loader";
 import { mapMutations } from "vuex";
 setDefaultOptions({
   version: `4.13`,
-  css: true,
+  css: `https://js.arcgis.com/4.13/esri/themes/dark/main.css`,
 });
 // TODO remove setDefaultOptions once CDN switches
 // TODO add legend
@@ -24,21 +24,133 @@ export default {
           title: `County`,
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/1`,
           visible: true,
+          popupTemplate: {
+            title: `{NAME}`,
+            content: [
+              {
+                type: `text`,
+                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+              <ul>
+                <li>2010 population: {TSPOP10_CY}</li>
+                <li>2019 population: {TOTPOP_CY}</li>
+              </ul>`,
+              },
+            ],
+            expressionInfos: [
+              {
+                name: `pop-change`,
+                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+              },
+            ],
+            fieldInfos: [
+              {
+                fieldName: `pop-change`,
+                format: {
+                  places: 0,
+                  digitSeparator: true,
+                },
+              },
+            ],
+          },
         },
         {
           title: `ZIP Code`,
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
           visible: false,
+          popupTemplate: {
+            title: `{NAME} | ZIP Code: {ID}`,
+            content: [
+              {
+                type: `text`,
+                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+              <ul>
+                <li>2010 population: {TSPOP10_CY}</li>
+                <li>2019 population: {TOTPOP_CY}</li>
+              </ul>`,
+              },
+            ],
+            expressionInfos: [
+              {
+                name: `pop-change`,
+                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+              },
+            ],
+            fieldInfos: [
+              {
+                fieldName: `pop-change`,
+                format: {
+                  places: 0,
+                  digitSeparator: true,
+                },
+              },
+            ],
+          },
         },
         {
           title: `Census Tract`,
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
           visible: false,
+          popupTemplate: {
+            title: `Census Tract: {ID}`,
+            content: [
+              {
+                type: `text`,
+                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+              <ul>
+                <li>2010 population: {TSPOP10_CY}</li>
+                <li>2019 population: {TOTPOP_CY}</li>
+              </ul>`,
+              },
+            ],
+            expressionInfos: [
+              {
+                name: `pop-change`,
+                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+              },
+            ],
+            fieldInfos: [
+              {
+                fieldName: `pop-change`,
+                format: {
+                  places: 0,
+                  digitSeparator: true,
+                },
+              },
+            ],
+          },
         },
         {
           title: `Census Block Group`,
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
           visible: false,
+          popupTemplate: {
+            title: `Census Block Group: {ID}`,
+            content: [
+              {
+                type: `text`,
+                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+              <ul>
+                <li>2010 population: {TSPOP10_CY}</li>
+                <li>2019 population: {TOTPOP_CY}</li>
+              </ul>`,
+              },
+            ],
+            expressionInfos: [
+              {
+                name: `pop-change`,
+                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+              },
+            ],
+            fieldInfos: [
+              {
+                fieldName: `pop-change`,
+                format: {
+                  places: 0,
+                  digitSeparator: true,
+                },
+              },
+            ],
+          },
         },
       ],
       outFields: [
@@ -61,7 +173,7 @@ export default {
         symbol: {
           type: `simple-fill`,
           style: `none`,
-          outline: { width: 1, color: [194, 194, 194, 0.15] },
+          outline: { width: 0.75, color: [128, 128, 128, 0.15] },
         },
         visualVariables: [
           {
@@ -74,27 +186,27 @@ export default {
             stops: [
               {
                 value: 0.75,
-                color: [190, 48, 39, 255],
+                color: `#ff1947`,
                 label: `< 0.75`,
               },
               {
                 value: 0.875,
-                color: [213, 133, 127, 255],
+                color: `#9c253d`,
                 label: null,
               },
               {
                 value: 1,
-                color: [235, 217, 216, 255],
+                color: `#3e3140`,
                 label: `1`,
               },
               {
                 value: 1.25,
-                color: [151, 162, 179, 255],
+                color: `#727681`,
                 label: null,
               },
               {
                 value: 1.5,
-                color: [102, 113, 129, 255],
+                color: `#aab2c8`,
                 label: `> 1.5`,
               },
             ],
@@ -102,7 +214,7 @@ export default {
         ],
       },
       popupTemplate: {
-        title: `{NAME_1} {NAME}`,
+        title: `{NAME}`,
         content: `this is the popup.`,
       },
     };
@@ -161,12 +273,12 @@ export default {
         ]) => {
           const vectorBaseLayer = new VectorTileLayer({
             // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
-            url: `https://www.arcgis.com/sharing/rest/content/items/291da5eab3a0412593b66d384379f89f/resources/styles/root.json`,
+            url: `https://www.arcgis.com/sharing/rest/content/items/5e9b3685f4c24d8781073dd928ebda50/resources/styles/root.json`,
           });
           // TODO add local vector style reference
           const vectorBaseReference = new VectorTileLayer({
             // item page: https://www.arcgis.com/home/item.html?id=1768e8369a214dfab4e2167d5c5f2454
-            url: `https://www.arcgis.com/sharing/rest/content/items/1768e8369a214dfab4e2167d5c5f2454/resources/styles/root.json`,
+            url: `https://www.arcgis.com/sharing/rest/content/items/747cb7a5329c478cbe6981076cc879c5/resources/styles/root.json`,
           });
 
           const generateFeatureLayerCollection = () => {
@@ -175,7 +287,7 @@ export default {
                 url: layerInfo.url,
                 renderer: this.colorRenderer,
                 popupEnabled: true,
-                popupTemplate: this.popupTemplate,
+                popupTemplate: layerInfo.popupTemplate,
                 visible: layerInfo.visible,
                 title: layerInfo.title,
                 outFields: [
@@ -212,6 +324,15 @@ export default {
             map,
             zoom: 8,
             center: [-118, 34],
+            popup: {
+              dockOptions: {
+                breakpoint: {
+                  width: 600,
+                  height: 600,
+                },
+                position: `top-right`,
+              },
+            },
           });
 
           const legend = new Legend({
@@ -223,7 +344,8 @@ export default {
           const legendExpandWidget = new Expand({
             view: this.view,
             content: legend,
-            expanded: true,
+            expandIconClass: `esri-icon-key`,
+            expanded: false,
             mode: `floating`,
           });
 
@@ -292,10 +414,6 @@ export default {
                   }
                 });
               });
-              const legendLabel = document.querySelector(
-                `.esri-legend__layer-table.esri-legend__layer-table--size-ramp`
-              );
-              console.log(legendLabel);
             },
             error => {
               // Use the errback function to handle when the view doesn't load properly

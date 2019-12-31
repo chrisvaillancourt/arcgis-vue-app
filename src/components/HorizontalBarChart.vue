@@ -1,13 +1,10 @@
 <template>
-  <div class="wrapper">
-    <div class="chart-container">
-      <horizontal-bar-chart id="chart" :chart-data="datacollection" :options="chartOptions" />
-    </div>
+  <div class="chart-container">
+    <horizontal-bar-chart id="chart" :chart-data="datacollection" :options="chartOptions" />
   </div>
 </template>
 
 <script>
-// TODO Add chart title & format hover interaction
 // TODO explain how numbers are calculated
 import { mapState, mapGetters } from "vuex";
 import HorizontalBarChart from "./HorizontalBarChart.js";
@@ -25,10 +22,10 @@ export default {
         title: {
           display: true,
           fontFamily: `"Avenir", Helvetica, Arial, sans-serif`,
-          fontColor: `#2e2f3e`,
+          fontColor: `#d1d1d1`,
           fontStyle: `normal`,
           fontSize: 18,
-          text: `Historical Population Time Series`,
+          text: [`Total Population Over Time`],
         },
         tooltips: {
           backgroundColor: `#2e2f3e`,
@@ -54,6 +51,7 @@ export default {
               type: `linear`,
               ticks: {
                 beginAtZero: true,
+                fontColor: `#d1d1d1`,
                 callback: function(value, index, values) {
                   return value
                     .toString()
@@ -64,6 +62,13 @@ export default {
                 display: true,
                 drawBorder: true,
                 drawOnChartArea: false,
+                color: `#595959bf`,
+              },
+              scaleLabel: {
+                display: true,
+                labelString: `Population in Current Map Extent`,
+                fontColor: `#7f7f7f`,
+                fontFamily: `"Avenir", Helvetica, Arial, sans-serif`,
               },
             },
           ],
@@ -71,6 +76,9 @@ export default {
             {
               gridLines: {
                 display: false,
+              },
+              ticks: {
+                fontColor: `#d1d1d1`,
               },
             },
           ],
@@ -98,7 +106,7 @@ export default {
         datasets: [
           {
             label: `data`,
-            backgroundColor: `#f87979`,
+            backgroundColor: `#595959`,
             data: this.getSummaryStats.map(obj => obj.value),
           },
         ],
@@ -146,7 +154,7 @@ export default {
             .filter(aliasArr => aliasArr.name == entriesArray[0])
             .map(subArr => subArr.alias)
             .toString()
-            .replace(`(Esri 2019)`, ``)
+            .slice(0, 4)
             .trim(),
           value: entriesArray[1],
         };
@@ -166,14 +174,12 @@ export default {
 
 <style>
 .wrapper {
-  /* max-width: 500px; */
-  /* max-height: 500px; */
+  /* max-width: 500px;
+  max-height: 400px; */
   /* margin: 150px auto; */
-  background-color: #fff;
-  border-radius: 2%;
-  padding: 10px;
 }
 .chart-container {
+  background-color: #242424;
   position: relative;
   height: 100%;
   width: 100%;
