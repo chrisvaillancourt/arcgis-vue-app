@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <EsriMap id="map" :featureLayerURL="this.dataAliasesURL" />
-    <HorizontalBarChart id="chart" v-show="this.$store.getters.getSummaryStats.length > 0" />
+    <HorizontalBarChart id="chart" />
   </div>
 </template>
 
@@ -78,6 +78,7 @@ body {
     grid-column: 13 / -1;
     grid-row: 6 / 10;
     max-width: 35vw;
+    max-height: 400px;
     bottom: 0;
     top: 20px;
   }

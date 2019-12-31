@@ -49,6 +49,7 @@ export default {
           xAxes: [
             {
               type: `linear`,
+              display: `auto`,
               ticks: {
                 beginAtZero: true,
                 fontColor: `#d1d1d1`,
@@ -74,6 +75,7 @@ export default {
           ],
           yAxes: [
             {
+              display: `auto`,
               gridLines: {
                 display: false,
               },

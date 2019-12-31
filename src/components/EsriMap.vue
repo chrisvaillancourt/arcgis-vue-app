@@ -9,10 +9,8 @@ setDefaultOptions({
   version: `4.13`,
   css: `https://js.arcgis.com/4.13/esri/themes/dark/main.css`,
 });
-// TODO remove setDefaultOptions once CDN switches
-// TODO add legend
-//TODO Add pop-ups
-// TODO overwrite boundary data to match field names
+// TODO remove setDefaultOptions once bug is resolved
+
 export default {
   name: `EsriMap`,
   props: [`featureLayerURL`],
@@ -29,7 +27,7 @@ export default {
             content: [
               {
                 type: `text`,
-                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+                text: `From 2010 - 2019, the population of this area <span style="font-weight: bold;">{expression/check-change-sign}</span> by <span style="font-weight: bold;">{expression/pop-change}%</span>. For comparison, the entire US population increased by 7.5% during this time period.<br>
               <ul>
                 <li>2010 population: {TSPOP10_CY}</li>
                 <li>2019 population: {TOTPOP_CY}</li>
@@ -39,7 +37,19 @@ export default {
             expressionInfos: [
               {
                 name: `pop-change`,
-                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+                expression: `round(abs((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100))`,
+              },
+              {
+                name: `check-change-sign`,
+                expression: `
+                    if ($feature.TOTPOP_CY - $feature.TSPOP10_CY > 0) {
+                      return 'increased'
+                    } else if ($feature.TOTPOP_CY - $feature.TSPOP10_CY < 0) {
+                      return 'decreased'
+                    } else {
+                      return 'changed'
+                    }
+                  `,
               },
             ],
             fieldInfos: [
@@ -58,11 +68,11 @@ export default {
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/2`,
           visible: false,
           popupTemplate: {
-            title: `{NAME} | ZIP Code: {ID}`,
+            title: `ZIP Code: {ID} | {NAME}`,
             content: [
               {
                 type: `text`,
-                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+                text: `From 2010 - 2019, the population of this area <span style="font-weight: bold;">{expression/check-change-sign}</span> by <span style="font-weight: bold;">{expression/pop-change}%</span>. For comparison, the entire US population increased by 7.5% during this time period.<br>
               <ul>
                 <li>2010 population: {TSPOP10_CY}</li>
                 <li>2019 population: {TOTPOP_CY}</li>
@@ -72,7 +82,19 @@ export default {
             expressionInfos: [
               {
                 name: `pop-change`,
-                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+                expression: `round(abs((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100))`,
+              },
+              {
+                name: `check-change-sign`,
+                expression: `
+                    if ($feature.TOTPOP_CY - $feature.TSPOP10_CY > 0) {
+                      return 'increased'
+                    } else if ($feature.TOTPOP_CY - $feature.TSPOP10_CY < 0) {
+                      return 'decreased'
+                    } else {
+                      return 'changed'
+                    }
+                  `,
               },
             ],
             fieldInfos: [
@@ -91,11 +113,11 @@ export default {
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/3`,
           visible: false,
           popupTemplate: {
-            title: `Census Tract: {ID}`,
+            title: `Census Tract {ID}`,
             content: [
               {
                 type: `text`,
-                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+                text: `From 2010 - 2019, the population of this area <span style="font-weight: bold;">{expression/check-change-sign}</span> by <span style="font-weight: bold;">{expression/pop-change}%</span>. For comparison, the entire US population increased by 7.5% during this time period.<br>
               <ul>
                 <li>2010 population: {TSPOP10_CY}</li>
                 <li>2019 population: {TOTPOP_CY}</li>
@@ -105,7 +127,19 @@ export default {
             expressionInfos: [
               {
                 name: `pop-change`,
-                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+                expression: `round(abs((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100))`,
+              },
+              {
+                name: `check-change-sign`,
+                expression: `
+                    if ($feature.TOTPOP_CY - $feature.TSPOP10_CY > 0) {
+                      return 'increased'
+                    } else if ($feature.TOTPOP_CY - $feature.TSPOP10_CY < 0) {
+                      return 'decreased'
+                    } else {
+                      return 'changed'
+                    }
+                  `,
               },
             ],
             fieldInfos: [
@@ -124,11 +158,11 @@ export default {
           url: `https://services.arcgis.com/AgwDJMQH12AGieWa/ArcGIS/rest/services/Population_Households_Housing_Units_Time_Series_2019_Simplified/FeatureServer/4`,
           visible: false,
           popupTemplate: {
-            title: `Census Block Group: {ID}`,
+            title: `Census Block Group {ID}`,
             content: [
               {
                 type: `text`,
-                text: `From 2010 - 2019, the population of this area changed by {expression/pop-change}%. For comparison, the entire US population increased by 7.5% during this time period.<br>
+                text: `From 2010 - 2019, the population of this area <span style="font-weight: bold;">{expression/check-change-sign}</span> by <span style="font-weight: bold;">{expression/pop-change}%</span>. For comparison, the entire US population increased by 7.5% during this time period.<br>
               <ul>
                 <li>2010 population: {TSPOP10_CY}</li>
                 <li>2019 population: {TOTPOP_CY}</li>
@@ -138,7 +172,19 @@ export default {
             expressionInfos: [
               {
                 name: `pop-change`,
-                expression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+                expression: `round(abs((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100))`,
+              },
+              {
+                name: `check-change-sign`,
+                expression: `
+                    if ($feature.TOTPOP_CY - $feature.TSPOP10_CY > 0) {
+                      return 'increased'
+                    } else if ($feature.TOTPOP_CY - $feature.TSPOP10_CY < 0) {
+                      return 'decreased'
+                    } else {
+                      return 'changed'
+                    }
+                  `,
               },
             ],
             fieldInfos: [
@@ -178,36 +224,33 @@ export default {
         visualVariables: [
           {
             type: `color`,
-            field: `TOTPOP_CY`,
-            normalizationField: `TOTPOP00`,
-            legendOptions: {
-              title: `Ratio of 2019 Pop. to 2000 Pop.`,
-            },
+            valueExpression: `round((($feature.TOTPOP_CY - $feature.TSPOP10_CY)/$feature.TSPOP10_CY)*100)`,
+            valueExpressionTitle: `2010 - 2019 Change in Pop (%)`,
             stops: [
               {
-                value: 0.75,
-                color: `#ff1947`,
-                label: `< 0.75`,
+                value: -10,
+                color: `#6690ff`,
+                label: `< -10%`,
               },
+              // {
+              //   value: -5,
+              //   color: `#9c253d`,
+              //   label: null,
+              // },
               {
-                value: 0.875,
-                color: `#9c253d`,
-                label: null,
+                value: 7.5,
+                color: `#423b38`,
+                label: `7.5% (US Avg.)`,
               },
+              // {
+              //   value: 15,
+              //   color: `#727681`,
+              //   label: null,
+              // },
               {
-                value: 1,
-                color: `#3e3140`,
-                label: `1`,
-              },
-              {
-                value: 1.25,
-                color: `#727681`,
-                label: null,
-              },
-              {
-                value: 1.5,
-                color: `#aab2c8`,
-                label: `> 1.5`,
+                value: 25,
+                color: `#ff9573`,
+                label: `> 25%`,
               },
             ],
           },
@@ -272,13 +315,12 @@ export default {
           Expand,
         ]) => {
           const vectorBaseLayer = new VectorTileLayer({
-            // item page: https://www.arcgis.com/home/item.html?id=291da5eab3a0412593b66d384379f89f
             url: `https://www.arcgis.com/sharing/rest/content/items/5e9b3685f4c24d8781073dd928ebda50/resources/styles/root.json`,
           });
           // TODO add local vector style reference
           const vectorBaseReference = new VectorTileLayer({
-            // item page: https://www.arcgis.com/home/item.html?id=1768e8369a214dfab4e2167d5c5f2454
             url: `https://www.arcgis.com/sharing/rest/content/items/747cb7a5329c478cbe6981076cc879c5/resources/styles/root.json`,
+            opacity: 0.7,
           });
 
           const generateFeatureLayerCollection = () => {
@@ -322,8 +364,15 @@ export default {
           this.view = new MapView({
             container: this.$el,
             map,
-            zoom: 8,
-            center: [-118, 34],
+            extent: {
+              xmin: -13915371,
+              ymin: -185352,
+              xmax: -8045007,
+              ymax: 7641798,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
             popup: {
               dockOptions: {
                 breakpoint: {
