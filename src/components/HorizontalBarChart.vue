@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <horizontal-bar-chart id="chart" :chart-data="datacollection" :options="chartOptions" />
+    <horizontal-bar-chart id="bar-chart" :chart-data="datacollection" :options="chartOptions" />
   </div>
 </template>
 
