@@ -3,6 +3,8 @@
 </template>
 
 <script>
+// TODO Update map extent -- it's too small on mobile
+// TODO popup template expanded on mobile
 import { loadModules, setDefaultOptions } from "esri-loader";
 import { mapMutations } from "vuex";
 setDefaultOptions({

@@ -25,10 +25,19 @@ export default {
 </script>
 
 <style>
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
 html,
 body {
   height: 100%;
   width: 100%;
+  background-color: #1d2224;
 }
 * {
   padding: 0;
@@ -38,52 +47,62 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 #app {
-  display: grid;
-  grid-template-columns: repeat(20, 5fr);
-  grid-template-rows: repeat(4, 1fr);
-  align-items: end;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 #map {
   height: 100%;
   width: 100%;
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 #chart {
-  grid-column: 1 / -1;
-  grid-row: 3 / -1;
-  z-index: 10;
-  width: 99vw;
-  /* max-height: 265px; */
-  max-height: 35vh;
-  border-radius: 2%;
-  padding: 2px;
-  bottom: 16px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 50vh;
 }
-
-/* #chart {
-  grid-column: 12 / 19;
-  grid-row: 10 / 20;
-  z-index: 10;
-} */
 .esri-legend__layer-table.esri-legend__layer-table--size-ramp:first-child {
   /* removes unnecessary legend element */
   display: none;
 }
 @media (min-width: 830px) {
+  #app {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+  }
+
+  #map {
+    height: 100%;
+    width: 100%;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+  }
+
   #chart {
-    grid-column: 13 / -1;
-    grid-row: 6 / 10;
-    max-width: 35vw;
-    max-height: 400px;
+    grid-column: 12 / 20;
+    grid-row: 12 / 20;
+    height: 100%;
+    width: 100%;
     bottom: 0;
     top: 20px;
+    z-index: 10;
+    padding: 15px;
   }
-  #app {
-    grid-template-rows: repeat(10, 1fr);
+}
+
+@media (min-width: 1600px) {
+  #chart {
+    grid-column: 13 / 20;
+    grid-row: 14 / 20;
+    height: 100%;
+    width: 100%;
+    bottom: 0;
+    top: 20px;
+    z-index: 10;
+    padding: 15px;
   }
 }
 </style>

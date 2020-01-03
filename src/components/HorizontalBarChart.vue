@@ -1,6 +1,11 @@
 <template>
   <div class="chart-container">
-    <horizontal-bar-chart id="bar-chart" :chart-data="datacollection" :options="chartOptions" />
+    <horizontal-bar-chart
+      id="bar-chart"
+      :chart-data="datacollection"
+      :options="chartOptions"
+      :styles="chartStyles"
+    />
   </div>
 </template>
 
@@ -18,6 +23,11 @@ export default {
       datacollection: {},
       chartData: {},
       fieldAliases: {},
+      chartStyles: {
+        height: `100%`,
+        width: `100%`,
+        position: `relative`,
+      },
       chartOptions: {
         title: {
           display: true,
@@ -175,15 +185,7 @@ export default {
 </script>
 
 <style>
-.wrapper {
-  /* max-width: 500px;
-  max-height: 400px; */
-  /* margin: 150px auto; */
-}
 .chart-container {
-  background-color: #242424;
-  position: relative;
-  height: 100%;
-  width: 100%;
+  background-color: #1a1a1a;
 }
 </style>
