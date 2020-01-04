@@ -57,11 +57,12 @@ body {
   width: 100%;
   flex-grow: 1;
   flex-shrink: 1;
+  z-index: 10;
 }
 #chart {
   flex-grow: 1;
   flex-shrink: 1;
-  height: 50vh;
+  height: 40vh;
 }
 .esri-legend__layer-table.esri-legend__layer-table--size-ramp:first-child {
   /* removes unnecessary legend element */
