@@ -231,38 +231,38 @@ export default {
             stops: [
               {
                 value: -5,
-                color: `#ff9573`,
-                label: `< -5%`,
+                color: `#e27c7c`,
+                label: `< -7%`,
               },
-              {
-                value: 0,
-                color: `#5e4338`,
-                label: null,
-              },
-              {
-                value: 3,
-                color: `#5e4338`,
-                label: null,
-              },
+              // {
+              //   value: 0,
+              //   color: `#5e4338`,
+              //   label: null,
+              // },
+              // {
+              //   value: 3,
+              //   color: `#5e4338`,
+              //   label: null,
+              // },
               {
                 value: 7.5,
-                color: `#423b38`,
-                label: `7.5% (US Avg.)`,
+                color: `#333333`,
+                label: `7.5% (US average)`,
               },
+              // {
+              //   value: 10,
+              //   color: `#475785`,
+              //   label: null,
+              // },
+              // {
+              //   value: 15,
+              //   color: `#526aad`,
+              //   label: null,
+              // },
               {
-                value: 10,
-                color: `#475785`,
-                label: null,
-              },
-              {
-                value: 15,
-                color: `#526aad`,
-                label: null,
-              },
-              {
-                value: 20,
-                color: `#6690ff`,
-                label: `> 30%`,
+                value: 25,
+                color: `#6cd4c5`,
+                label: `> 25%`,
               },
             ],
           },
@@ -442,7 +442,7 @@ export default {
               let targetLayer = getMapLayerByTitle(`County`); //targetLayer will be used for layer visibility and setting up the layerView for the chart
 
               this.view.watch(`zoom`, newZoomVal => {
-                if (newZoomVal > 8 && newZoomVal <= 10) {
+                if (newZoomVal > 7 && newZoomVal <= 10) {
                   targetLayer = getMapLayerByTitle(`ZIP Code`);
                 } else if (newZoomVal > 10 && newZoomVal <= 12) {
                   targetLayer = getMapLayerByTitle(`Census Tract`);
