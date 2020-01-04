@@ -230,29 +230,39 @@ export default {
             valueExpressionTitle: `2010 - 2019 Change in Pop (%)`,
             stops: [
               {
-                value: -10,
-                color: `#6690ff`,
-                label: `< -10%`,
+                value: -5,
+                color: `#ff9573`,
+                label: `< -5%`,
               },
-              // {
-              //   value: -5,
-              //   color: `#9c253d`,
-              //   label: null,
-              // },
+              {
+                value: 0,
+                color: `#5e4338`,
+                label: null,
+              },
+              {
+                value: 3,
+                color: `#5e4338`,
+                label: null,
+              },
               {
                 value: 7.5,
                 color: `#423b38`,
                 label: `7.5% (US Avg.)`,
               },
-              // {
-              //   value: 15,
-              //   color: `#727681`,
-              //   label: null,
-              // },
               {
-                value: 25,
-                color: `#ff9573`,
-                label: `> 25%`,
+                value: 10,
+                color: `#475785`,
+                label: null,
+              },
+              {
+                value: 15,
+                color: `#526aad`,
+                label: null,
+              },
+              {
+                value: 20,
+                color: `#6690ff`,
+                label: `> 30%`,
               },
             ],
           },
