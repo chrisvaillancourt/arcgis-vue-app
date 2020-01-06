@@ -314,6 +314,7 @@ export default {
       `esri/layers/FeatureLayer`,
       `esri/widgets/Legend`,
       `esri/widgets/Expand`,
+      `esri/widgets/Search`,
     ])
       .then(
         ([
@@ -325,6 +326,7 @@ export default {
           FeatureLayer,
           Legend,
           Expand,
+          Search,
         ]) => {
           const vectorBaseLayer = new VectorTileLayer({
             url: `https://www.arcgis.com/sharing/rest/content/items/5e9b3685f4c24d8781073dd928ebda50/resources/styles/root.json`,
@@ -410,6 +412,18 @@ export default {
             mode: `floating`,
           });
 
+          const searchWidget = new Search({
+            view: this.view,
+          });
+
+          const searchExpandWidget = new Expand({
+            view: this.view,
+            content: searchWidget,
+            expandIconClass: `esri-icon-search`,
+            expanded: false,
+            mode: `floating`,
+          });
+
           // use view.when to do functionality after view is loaded
           // view.watch(`scale`, function(newValue) {
           //   console.log(`scale property changed: `, newValue);
@@ -438,6 +452,7 @@ export default {
               });
               this.view.ui.add(homeButton, `top-left`);
               this.view.ui.add(legendExpandWidget, `top-left`);
+              this.view.ui.add(searchExpandWidget, `top-right`);
 
               let targetLayer = getMapLayerByTitle(`County`); //targetLayer will be used for layer visibility and setting up the layerView for the chart
 
