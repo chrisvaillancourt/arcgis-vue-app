@@ -10,7 +10,6 @@
 </template>
 
 <script>
-// TODO explain how numbers are calculated
 import { mapState, mapGetters } from "vuex";
 import HorizontalBarChart from "./HorizontalBarChart.js";
 

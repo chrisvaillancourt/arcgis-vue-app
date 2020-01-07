@@ -3,15 +3,13 @@
 </template>
 
 <script>
-// TODO Update map extent -- it's too small on mobile
-// TODO popup template expanded on mobile
 import { loadModules, setDefaultOptions } from "esri-loader";
 import { mapMutations } from "vuex";
 setDefaultOptions({
   version: `4.13`,
   css: `https://js.arcgis.com/4.13/esri/themes/dark/main.css`,
 });
-// TODO remove setDefaultOptions once bug is resolved
+// TODO remove setDefaultOptions once client side query issue resolved
 
 export default {
   name: `EsriMap`,
@@ -335,7 +333,6 @@ export default {
           const vectorBaseLayer = new VectorTileLayer({
             url: `https://www.arcgis.com/sharing/rest/content/items/5e9b3685f4c24d8781073dd928ebda50/resources/styles/root.json`,
           });
-          // TODO add local vector style reference
           const vectorBaseReference = new VectorTileLayer({
             url: `https://www.arcgis.com/sharing/rest/content/items/747cb7a5329c478cbe6981076cc879c5/resources/styles/root.json`,
             opacity: 0.7,
@@ -578,8 +575,6 @@ export default {
           });
 
           // use view.when to do functionality after view is loaded
-
-          // TODO move to component method
           function setActiveLayer({ layerCollection, visibleLayer }) {
             layerCollection.forEach(layer => {
               if (layer == visibleLayer) {
