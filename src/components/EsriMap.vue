@@ -221,7 +221,7 @@ export default {
         symbol: {
           type: `simple-fill`,
           style: `none`,
-          outline: { width: 0.75, color: [128, 128, 128, 0.15] },
+          outline: { width: 0.75, color: [145, 145, 145, 0.15] },
         },
         visualVariables: [
           {
@@ -232,7 +232,7 @@ export default {
               {
                 value: -5,
                 color: `#e27c7c`,
-                label: `< -7%`,
+                label: `< -5%`,
               },
               // {
               //   value: 0,
@@ -315,6 +315,8 @@ export default {
       `esri/widgets/Legend`,
       `esri/widgets/Expand`,
       `esri/widgets/Search`,
+      `esri/webmap/Bookmark`,
+      `esri/widgets/Bookmarks`,
     ])
       .then(
         ([
@@ -327,6 +329,8 @@ export default {
           Legend,
           Expand,
           Search,
+          Bookmark,
+          Bookmarks,
         ]) => {
           const vectorBaseLayer = new VectorTileLayer({
             url: `https://www.arcgis.com/sharing/rest/content/items/5e9b3685f4c24d8781073dd928ebda50/resources/styles/root.json`,
@@ -360,7 +364,7 @@ export default {
                   `TSPOP18_CY`,
                   `TOTPOP_CY`,
                   `AREA_GEO`,
-                ], // we need to specify any additional fields
+                ],
               });
             });
           };
@@ -379,10 +383,10 @@ export default {
             container: this.$el,
             map,
             extent: {
-              xmin: -13915371,
-              ymin: -185352,
-              xmax: -8045007,
-              ymax: 7641798,
+              xmin: -14536650.344461735,
+              ymin: 22014.01594614098,
+              xmax: -7032368.655538267,
+              ymax: 7805137.9840538595,
               spatialReference: {
                 wkid: 102100,
               },
@@ -424,10 +428,157 @@ export default {
             mode: `floating`,
           });
 
+          const nycBookmark = new Bookmark({
+            extent: {
+              xmin: -8255973,
+              ymin: 4941087,
+              xmax: -8197346,
+              ymax: 5001893,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `New York City, NY`,
+            thumbnail: null,
+          });
+
+          const chicagoBookmark = new Bookmark({
+            extent: {
+              xmin: -9782908,
+              ymin: 5107405,
+              xmax: -9724281,
+              ymax: 5168210,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Chicago, IL`,
+            thumbnail: null,
+          });
+
+          const seattleBoomark = new Bookmark({
+            extent: {
+              xmin: -13646965,
+              ymin: 6010770,
+              xmax: -13588338,
+              ymax: 6071576,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Seattle, WA`,
+            thumbnail: null,
+          });
+
+          const austinBookmark = new Bookmark({
+            extent: {
+              xmin: -10910013,
+              ymin: 3507615,
+              xmax: -10851386,
+              ymax: 3568421,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Austin, TX`,
+            thumbnail: null,
+          });
+
+          const denverBookmark = new Bookmark({
+            extent: {
+              xmin: -11716971,
+              ymin: 4797872,
+              xmax: -11658344,
+              ymax: 4858678,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Denver, CO`,
+            thumbnail: null,
+          });
+
+          const detroitBookmark = new Bookmark({
+            extent: {
+              xmin: -9274174,
+              ymin: 5180415,
+              xmax: -9215547,
+              ymax: 5241221,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Detroit, MI`,
+            thumbnail: null,
+          });
+
+          const baltimoreBookmark = new Bookmark({
+            extent: {
+              xmin: -8542760,
+              ymin: 4748187,
+              xmax: -8513447,
+              ymax: 4778590,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Baltimore, MD`,
+            thumbnail: null,
+          });
+
+          const buckeyeBookmark = new Bookmark({
+            extent: {
+              xmin: -12562745,
+              ymin: 3914237,
+              xmax: -12504117,
+              ymax: 3975042,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Buckeye, AZ`,
+            thumbnail: null,
+          });
+
+          const flintBookmark = new Bookmark({
+            extent: {
+              xmin: -9330627,
+              ymin: 5298518,
+              xmax: -9301314,
+              ymax: 5328921,
+              spatialReference: {
+                wkid: 102100,
+              },
+            },
+            name: `Flint, MI`,
+            thumbnail: null,
+          });
+
+          const bookmarks = new Bookmarks({
+            view: this.view,
+            bookmarks: [
+              austinBookmark,
+              baltimoreBookmark,
+              buckeyeBookmark,
+              chicagoBookmark,
+              denverBookmark,
+              detroitBookmark,
+              flintBookmark,
+              nycBookmark,
+              seattleBoomark,
+            ],
+          });
+
+          const bookmarksExpandWidget = new Expand({
+            view: this.view,
+            content: bookmarks,
+            expandIconClass: `esri-icon-bookmark`,
+            expanded: false,
+            mode: `floating`,
+          });
+
           // use view.when to do functionality after view is loaded
-          // view.watch(`scale`, function(newValue) {
-          //   console.log(`scale property changed: `, newValue);
-          // });
+
           // TODO move to component method
           function setActiveLayer({ layerCollection, visibleLayer }) {
             layerCollection.forEach(layer => {
@@ -446,14 +597,15 @@ export default {
           this.view.when(
             () => {
               // All the resources in the MapView and the map have loaded. Now execute additional processes
-
               const homeButton = new Home({
                 view: this.view,
               });
-              this.view.ui.add(homeButton, `top-left`);
-              this.view.ui.add(legendExpandWidget, `top-left`);
-              this.view.ui.add(searchExpandWidget, `top-right`);
 
+              this.view.ui.add([homeButton, legendExpandWidget], `top-left`);
+              this.view.ui.add(
+                [searchExpandWidget, bookmarksExpandWidget],
+                `top-right`
+              );
               let targetLayer = getMapLayerByTitle(`County`); //targetLayer will be used for layer visibility and setting up the layerView for the chart
 
               this.view.watch(`zoom`, newZoomVal => {
