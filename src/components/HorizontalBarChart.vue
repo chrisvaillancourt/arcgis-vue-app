@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 import HorizontalBarChart from "./HorizontalBarChart.js";
 
 export default {
@@ -62,7 +62,7 @@ export default {
               ticks: {
                 beginAtZero: true,
                 fontColor: `#d1d1d1`,
-                callback: function(value, index, values) {
+                callback: function(value) {
                   return value
                     .toString()
                     .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1,`);
@@ -118,7 +118,7 @@ export default {
           {
             label: `data`,
             backgroundColor: `#595959`,
-            data: this.getSummaryStats.map(obj => obj.value),
+            data: this.chartData.map(dataArr => dataArr.value),
           },
         ],
       };
@@ -138,7 +138,6 @@ export default {
   },
   computed: {
     ...mapState([`mapViewData`, `mapViewSummaryData`, `dataAliasesURL`]),
-    ...mapGetters([`getSummaryStats`]),
     summarizeMapViewData: function() {
       const summaryObject = this.mapViewData.reduce(
         (accumulator, currentObject) => {

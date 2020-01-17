@@ -200,8 +200,6 @@ export default {
         },
       ],
       outFields: [
-        `OBJECTID`,
-        `TOTPOP00`,
         `TSPOP10_CY`,
         `TSPOP11_CY`,
         `TSPOP12_CY`,
@@ -348,8 +346,6 @@ export default {
                 visible: layerInfo.visible,
                 title: layerInfo.title,
                 outFields: [
-                  `OBJECTID`,
-                  `TOTPOP00`,
                   `TSPOP10_CY`,
                   `TSPOP11_CY`,
                   `TSPOP12_CY`,
