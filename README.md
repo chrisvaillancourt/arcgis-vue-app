@@ -1,4 +1,4 @@
-# arcgis-vue-app
+# US Population Time series (2010 - 2019)
 
 ## Project setup
 ```
